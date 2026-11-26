@@ -1,117 +1,78 @@
 # CraftBet QA Automation
 
-Practical assignment for the **Automation QA Engineer** position.
+Test assignment for the Automation QA Engineer position.
 
-| Part | Tooling | Location |
-|------|---------|----------|
-| 1. Web UI automation of [craftbet.com](https://craftbet.com) | Python 3.11, Selenium 4, Pytest, Page Object Model | `pages/`, `tests/` |
-| 2. API testing | Postman collection (14 requests) + Newman | `postman/` |
+1. UI tests for https://craftbet.com — Python, Selenium, Pytest (Page Object pattern)
+2. API tests — Postman collection
 
-Detailed scenario descriptions, validations and challenges: [docs/TEST_SCENARIOS.md](docs/TEST_SCENARIOS.md).
-Execution results (HTML reports, logs, screenshots): [docs/results/](docs/results/).
+More details about test cases and problems I faced are in [docs/TEST_SCENARIOS.md](docs/TEST_SCENARIOS.md).
+Results of my test runs (reports, log, screenshots) are in [docs/results](docs/results).
 
----
+## Project structure
 
-## 1. Project structure
+- `config/` – settings (URL, browser, timeouts), values are read from `.env`
+- `pages/` – page objects (header, login, casino lobby, game page, account)
+- `tests/` – tests:
+  - `test_01_authentication.py` – login / logout
+  - `test_02_navigation.py` – menu, pages, back / forward
+  - `test_03_games.py` – demo games
+  - `test_04_additional_features.py` – language, categories, search, favorites, account pages
+  - `test_05_user_journey.py` – full user flow from login to logout
+- `utils/` – driver setup and logger
+- `postman/` – Postman collection and environment
+- `scripts/get_api_token.py` – logs in and saves the token for Postman
 
-```
-craftbet-qa-automation/
-├── config/settings.py          # all settings, read from environment / .env
-├── pages/                      # Page Object Model
-│   ├── base_page.py            # explicit waits, safe click, screenshots, helpers
-│   ├── components.py           # Header (menu, language, auth state) + LoginModal
-│   ├── home_page.py
-│   ├── casino_page.py          # lobby: categories, search, game cards (demo / real)
-│   ├── game_page.py            # game iframe: load checks + demo interactions
-│   └── content_pages.py        # info / promo pages, account area (history, logout)
-├── tests/
-│   ├── conftest.py             # driver & logged-in fixtures, screenshot-on-result hook
-│   ├── test_01_authentication.py
-│   ├── test_02_navigation.py
-│   ├── test_03_games.py
-│   ├── test_04_additional_features.py
-│   └── test_05_user_journey.py # complete end-to-end journey
-├── utils/                      # driver factory, logger
-├── scripts/get_api_token.py    # UI login -> exports a session token for Postman
-├── postman/                    # collection, environment, generator
-├── docs/                       # scenarios, challenges, execution results
-├── .env.example                # template for credentials (real .env is git-ignored)
-├── pytest.ini
-└── requirements.txt
-```
+## How to install
 
-## 2. Installation
-
-Requirements: **Python 3.10+**, **Google Chrome** (or Edge). The browser driver is resolved automatically by Selenium Manager.
+You need Python 3.10+ and Google Chrome. The chromedriver is downloaded automatically by Selenium.
 
 ```bash
-git clone <this repository>
-cd craftbet-qa-automation
 python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS / Linux
-source .venv/bin/activate
+.venv\Scripts\activate          # on Mac/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Credentials of the test account are **not** stored in the repository:
+Login and password are not in the repository. Copy `.env.example` to `.env` and write the test account there:
 
-```bash
-cp .env.example .env        # Windows: copy .env.example .env
-# then fill CRAFTBET_USERNAME and CRAFTBET_PASSWORD in .env
+```
+CRAFTBET_USERNAME=...
+CRAFTBET_PASSWORD=...
 ```
 
-Without credentials, tests that need a session (marker `auth`) are skipped automatically and all guest scenarios still run.
+If `.env` is empty, tests that need login are skipped, other tests still run.
 
-## 3. Running the UI tests
+## How to run
 
 ```bash
-pytest                                  # everything
-pytest -m smoke                         # quick smoke
-pytest -m "navigation or games"         # by area
-pytest tests/test_05_user_journey.py    # full journey (needs credentials)
-HEADLESS=true pytest                    # headless (PowerShell: $env:HEADLESS="true"; pytest)
+pytest                                   # all tests
+pytest -m smoke                          # only smoke tests
+pytest tests/test_03_games.py            # one file
 ```
 
 Markers: `smoke`, `auth`, `negative`, `navigation`, `games`, `functional`, `e2e`.
 
-Results of every run:
+After the run:
+- `reports/report.html` – HTML report, every test has a screenshot
+- `reports/screenshots/` – screenshots of the steps
+- `reports/logs/` – log file
 
-* `reports/report.html` – self-contained HTML report with a screenshot attached to every test
-* `reports/screenshots/` – step screenshots (game loaded, after interaction, pages, etc.)
-* `reports/logs/run_<timestamp>.log` – detailed step log
+## Postman
 
-## 4. Running the Postman collection
+Import `postman/CraftBet_API.postman_collection.json` and `postman/CraftBet.postman_environment.json`.
 
-Import into Postman:
+Public requests work without login. For client data you need a token:
+- run `python scripts/get_api_token.py` – it logs in with the account from `.env` and creates `postman/CraftBet.env.local.json`, or
+- log in on the site, copy `token` from Local Storage (DevTools → Application) to the `token` variable and run request `00. Validate session` first.
 
-* `postman/CraftBet_API.postman_collection.json`
-* `postman/CraftBet.postman_environment.json`
-
-The public folder works immediately. Client-data requests need a session **token**:
-
-* **Option A (automated):** `python scripts/get_api_token.py` – logs in through the UI with the `.env`
-  credentials and writes `postman/CraftBet.env.local.json` (git-ignored) with `token`, `clientId`, `currencyId`.
-* **Option B (manual):** log in on craftbet.com, open DevTools → Application → Local Storage →
-  `https://craftbet.com`, copy the `Token` value (key `token`, or the `Token` field of the `…user` entry),
-  paste it into the `token` environment variable and run **00. Validate session** – it fills `clientId` and `currencyId`.
-
-Command-line run with Newman (Node.js required):
+Run from command line with Newman:
 
 ```bash
 npm install -g newman newman-reporter-htmlextra
-newman run postman/CraftBet_API.postman_collection.json \
-       -e postman/CraftBet.env.local.json \
-       --reporters cli,htmlextra --reporter-htmlextra-export postman/newman/report.html
+newman run postman/CraftBet_API.postman_collection.json -e postman/CraftBet.env.local.json -r cli,htmlextra
 ```
 
-If the token is empty, client-data requests are skipped (not failed) by a pre-request script.
-The collection is generated from `postman/build_collection.py` (`python postman/build_collection.py`).
+## Notes
 
-## 5. Safety rules followed
-
-* Only **Demo** (fun-mode) games are opened; cards that offer only *Real* play are skipped and logged.
-* No deposits, withdrawals, bets with real money or any data-changing API calls – the Postman
-  collection uses only `Get*` methods.
-* Credentials and tokens are kept in `.env` / `*.local.json`, both git-ignored.
+- Only demo games are opened. Games that can be played only for real money are skipped.
+- No deposits, withdrawals or real bets. All API requests only read data.
+- `.env` and files with tokens are in `.gitignore`.

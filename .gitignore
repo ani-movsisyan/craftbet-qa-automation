@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets - never commit real credentials
+.env
+postman/*.local.json
+postman/newman/
+
+# IDE
+.idea/
+.vscode/
+
+# Raw run artefacts (curated results are kept in docs/results/)
+reports/

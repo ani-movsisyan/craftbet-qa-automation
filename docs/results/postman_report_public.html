@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow-y: scroll;">
+<head>
+  <meta charset="UTF-8">
+  <title>Newman Summary Report</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/default.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+
+<style>
+code.renderMarkdown table, code.renderMarkdown th, code.renderMarkdown td {
+    border: 1px solid black;
+    width: max-content;
+    padding: .75rem;
+}
+
+.theme-dark {
+    --background-color: #222;
+    --bg-card-deck: #444444;
+    --text-color: #ccd2d8;
+    --tab-border: solid 1px #444;
+    --success: #3c9372;
+    --failure: #c24a3f;
+    --warning: #d28c23;
+    --info: #4083b6;
+    --badge-outline: #3c9372;
+    --badge-bg: #cdd3db;
+    --badge-text: #ccd2d9;
+    --failure-row: #c24a3f;
+    --warning-row: #d28c23;
+    --card-bg: #444;
+    --card-footer: #4f5758;
+    --form-input: #ececb5;
+    --hov-text: #d2dae5;
+    --h4-text: #ccd1d9;
+}
+
+.theme-light {
+    --tab-border: solid 1px #fff;
+    --text-color: #000000;
+    --success: #42a745;
+    --failure: #dc3544;
+    --warning: #f4c10b;
+    --info: #49a1b8;
+    --badge-outline: #040411;
+    --badge-bg: #f8f9fa;
+    --badge-text: #fff;
+    --failure-row: #f5c6cb;
+    --warning-row: #ffeeba;
+    --card-bg: #f7f7f7;
+    --hov-text: #fff;
+    --h4-text: #ffffff;
+}
+
+body {
+  padding-top:30px;
+  background-color: var(--background-color)!important;
+  color: var(--text-color);
+}
+
+#execution-data {
+  padding: 10px;
+  border: var(--tab-border);
+  border-top: none;
+}
+
+.nav-tabs {
+  padding-top: 10px;
+  height: 105px;
+  overflow-y: auto;
+}
+
+body.theme-dark .card-header {
+    background-color: #444;
+}
+
+body.theme-light .card-header {
+    background-color: #f7f7f7;
+}
+
+.card-footer {
+    padding: .75rem 1.25rem;
+    background-color: var(--card-footer);
+}
+
+.card-deck {
+    background-color: var(--bg-card-deck)!important;
+}
+.form-control {
+    background: var(--form-input);
+}
+
+.custom-tab {
+  padding: 10px 15px;
+  margin-right: 0px;
+  height: 47px;
+  width: 69px;
+  text-align: center;
+  border: var(--tab-border);
+  border-bottom: none;
+  cursor:pointer;
+}
+
+body.theme-dark .text-white {
+    color: #ccd2d9!important;
+}
+h4 {
+    color: var(--h4-text);
+}
+
+body.theme-dark h1 {
+    color: #ccd2da;
+}
+
+body.theme-dark .bg-light>td {
+    background: #4f5858!important;
+}
+
+body.theme-dark .hljs {
+    background: #0a0a0ab0!important;
+    color: #8d8787!important;
+}
+
+.bg-info {
+    background-color: var(--info)!important;
+}
+.bg-success {
+    background-color: var(--success)!important;
+}
+
+.alert-success {
+    background-color: var(--success)!important;
+}
+
+.alert-warning {
+    background-color: var(--warning)!important;
+}
+
+.alert-info {
+    background-color: var(--info)!important;
+}
+
+.bg-warning {
+    background-color: var(--warning)!important;
+}
+
+.badge-warning {
+    color: var(--badge-text)!important;
+    background-color: var(--warning)!important;
+}
+
+.table-warning>td {
+    background-color: var(--warning-row);
+}
+
+.alert-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-dark .alert-dark {
+    background-color: #636467!important;
+}
+
+body.theme-dark .text-dark {
+    color: #d1dae4!important;
+}
+
+body.theme-dark .badge-light {
+    color: #212529;
+    background-color: #cdd3db;
+}
+
+body.theme-light .badge-light {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+body.theme-light .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-dark .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+.table-danger>td {
+    background-color: var(--failure-row);
+}
+
+body.theme-dark .table .thead-light th {
+    background-color: #4f5858!important;
+    border-color: #dee2e6!important;
+    color: #ccd2d8!important;
+}
+
+.itPassed {
+  background: var(--success);
+  color: white;
+}
+.itFailed {
+  background: var(--failure);
+  color: white;
+}
+
+.resultsInfoPass {
+  color: var(--success);
+  padding-top: 4px;
+}
+
+.resultsInfoFail {
+  color: var(--failure);
+  padding-top: 4px;
+}
+
+.badge-outline-success {
+  color: var(--success);
+  border: 1px solid var(--success);
+  background-color: transparent;
+}
+
+.badge-outline {
+  color: var(--badge-outline);
+  border: 1px solid var(--badge-outline);
+  background-color: transparent;
+}
+
+.btn-outline-success {
+    color: var(--success)!important;
+    border-color: var(--success)!important;
+}
+
+.backToTop:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+
+.btn-outline-success:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+
+.btn-outline-secondary {
+  background-color: var(--success)!important;
+  color: var(--hov-text)!important;
+}
+
+body.theme-dark .env-heading {
+    color: #ccd2d9!important;
+}
+
+body, html {
+  height:100%;
+}
+
+.card {
+  overflow:hidden;
+}
+
+body.theme-dark .card-body {
+    background-color: #444;
+}
+
+body.theme-light .card-body {
+    background-color: #f7f7f7;
+}
+
+body.theme-dark .card-body .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-light .card-body .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+.card-body .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+
+.card-body .rotate i {
+  color: #14141426;
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}
+
+.dyn-height {
+  max-height:350px;
+  overflow-y:auto;
+}
+
+.nav-pills .nav-link.active {
+  background-color: transparent!important;
+}
+
+.backToTop {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  z-index: 99;
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+}
+.card-header .collapsed .fa {
+  transform: rotate(90deg);
+}
+
+.single-line-tabs {
+  padding-top: 10px;
+  height: 60px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 0px;
+  bottom: 4px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  box-shadow: 0 0px 15px #2020203d;
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+input:checked + .slider {
+  background-color: #4083b6;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4083b6;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(24px);
+  -ms-transform: translateX(24px);
+  transform: translateX(24px);
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+table.dataTable td, table.dataTable tr {
+    vertical-align: middle;
+}
+
+body.theme-dark code {
+    color: #ccd2d8!important;
+}
+
+body.theme-light code {
+    color: #000000!important;
+}
+
+.text-wrap {
+    word-wrap: break-word; 
+    min-width: 600px; 
+    max-width: 600px; 
+    white-space: normal;
+}
+
+</style>
+</head>
+<body class="theme-dark">
+<script>
+    function setTheme(themeName) {
+        localStorage.setItem('theme', themeName);
+        document.body.className = themeName;
+    }
+
+    function toggleTheme() {
+        if (localStorage.getItem('theme') === 'theme-light') {
+            setTheme('theme-dark');
+        } else {
+            setTheme('theme-light');
+        }
+    }
+</script>
+  <div class="container">
+        <div class="container">
+            <label>Light</label>
+            <label id="switch" class="switch">
+                <input type="checkbox" onchange="toggleTheme()" id="slider">
+                <span class="slider round"></span>
+            </label>
+            <label>Dark</label>
+        </div>
+        <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+            <li class="nav-item bg-info active" data-toggle="tooltip" title="Click to view the Summary">
+                <a class="nav-link text-white" id="pills-summary-tab" data-toggle="pill" href="#pills-summary" role="tab" aria-controls="pills-summary" aria-selected="true">Summary</a>
+            </li>
+            <li class="nav-item bg-success" data-toggle="tooltip" title="Click to view the Requests">
+                <a class="nav-link text-white" id="pills-requests-tab" data-toggle="pill" href="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Total Requests <span class="badge badge-light">3</span></a>
+            </li>
+            <li class="nav-item bg-danger" data-toggle="tooltip" title="Click to view the Failed Tests">
+                <a class="nav-link text-white" id="pills-failed-tab" data-toggle="pill" href="#pills-failed" role="tab" aria-controls="pills-failed" aria-selected="false">Failed Tests <span class="badge badge-light">0</span></a>
+            </li>
+            <li class="nav-item bg-warning" data-toggle="tooltip" title="Click to view the Skipped Tests">
+                <a class="nav-link text-white" id="pills-skipped-tab" data-toggle="pill" href="#pills-skipped" role="tab" aria-controls="pills-skipped" aria-selected="false">Skipped Tests <span class="badge badge-light">0</span></a>
+            </li>
+            </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-summary" role="tabcard" aria-labelledby="pills-summary-tab">
+<div class="row">
+  <div class="col-md-9 col-lg-12 main">
+   <h1 class="display-2 text-center">Newman Run Dashboard</h1>
+   <h5 class="text-center">Thursday, 26 November 2026 20:08:06</h5>
+   <div class="row">
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-success">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-retweet fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Iterations</h6>
+       <h1 class="display-1">1</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-danger">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-list fa-4x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Assertions</h6>
+       <h1 class="display-1">23</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-info">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-plus-circle fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Failed Tests</h6>
+       <h1 class="display-1">0</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-warning">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-share fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Skipped Tests</h6>
+       <h1 class="display-1">0</h1>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+    <div class="row">
+    <div class="col">
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">File Information</h5>
+                <span><i class="fas fa-file-code"></i></span><strong> Collection:</strong> CraftBet API - data retrieval<br>
+                
+                <span><i class="fas fa-file-code"></i></span><strong> Environment:</strong> CraftBet - production web API<br>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Collection Description</h5>
+                <div class="dyn-height">
+                    <code class="renderMarkdown">Read-only requests to the CraftBet website API (&#x60;websitewebapi.craftbet.com&#x60;).
+
+The platform exposes an RPC-style API: most read operations are &#x60;POST&#x60; requests whose body names the &#x60;Controller&#x60; and &#x60;Method&#x60; (e.g. &#x60;Document/GetBetsHistory&#x60;). Only &#x60;Get*&#x60; methods are used here - nothing creates, changes or deletes data.
+
+Authentication: the website encrypts credentials client-side (RSA) before &#x60;LoginClient&#x60;, so the collection works with a session token instead. Put it into the &#x60;token&#x60; environment variable (see README) and run &#x60;00. Validate session&#x60; first.</code>
+                </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Timings and Data</h5>
+                <span><i class="fas fa-stopwatch"></i></span><strong> Total run duration:</strong> 1617ms<br>
+                <span><i class="fas fa-database"></i></span><strong> Total data received:</strong> 25.85KB<br>
+                <span><i class="fas fa-stopwatch"></i></span><strong> Average response time:</strong> 319ms<br>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-inverse">
+                    <tr class="text-center">
+                        <th class="text-uppercase">Summary Item</th>
+                        <th class="text-uppercase">Total</th>
+                        <th class="text-uppercase">Failed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Requests</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr>
+                        <td>Prerequest Scripts</td>
+                        <td class="text-center">25</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr>
+                        <td>Test Scripts</td>
+                        <td class="text-center">6</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr class="">
+                        <td>Assertions</td>
+                        <td class="text-center">23</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr class="">
+                        <td>Skipped Tests</td>
+                        <td class="text-center">0</td>
+                        <td class="text-center">-</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+    <hr>
+   </div>
+   </div>
+  </div>
+ </div>
+        </div>
+            <div class="tab-pane fade" id="pills-failed" role="tabcard" aria-labelledby="pills-failed-tab">
+                <button id="topOfFailuresScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+                <div class="alert alert-success text-uppercase text-center">
+                     <br><br><h1 class="text-center">There are no failed tests <span><i class="far fa-thumbs-up"></i></span></h1><br><br>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-skipped" role="tabcard" aria-labelledby="pills-skipped-tab">
+                <button id="topOfSkippedScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+                <div class="alert alert-success text-uppercase text-center">
+                    <br><br><h1 class="text-center">There are no skipped tests <span><i class="far fa-thumbs-up"></i></span></h1><br><br>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-requests" role="tabcard" aria-labelledby="pills-requests-tab">
+
+            <button id="topOfRequestsScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+            <div class="btn-group float-right" role="group" aria-label="Button Group">
+                <button id="openAll" class="btn btn-outline-success btn-sm float-right" style="text-align: center; width: 140px;">Expand Folders</button>
+                <button id="openAllRequests" class="btn btn-outline-success btn-sm float-right" style="text-align: center; width: 140px;">Expand Requests</button>
+            </div>
+
+    <div class="text-uppercase" id="execution-menu">
+        <h5>1 Iteration available to view</h5>
+        
+        <nav class="table-responsive">
+        <ul class="nav single-line-tabs" id="iterationList">
+        </ul>
+        </nav>
+    </div>
+    <h6 class="text-uppercase text-muted" id="iterationSelected" style="padding-top: 10px;"></h6>
+	<div class="tab-content" id="execution-data">
+        <div class="alert alert-dark text-uppercase text-center iteration-0">
+        <a data-toggle="collapse" href="#" data-target="#folder-collapse-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0" aria-expanded="false" aria-controls="collapse" id="folder-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0" class="collapsed text-dark z-block">
+        <i class="fas fa-info-circle float-left resultsInfoPass" ></i>
+            Public data (no session) - 3 Requests in the folder<i class="float-lg-right fa fa-chevron-down" style="padding-top: 5px;"></i>
+        </a>
+        </div>
+        <div id="folder-collapse-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0" class="collapse" aria-labelledby="folder-069245f1-1568-43bb-8b53-5675ee70dc9a">
+            <div id="folder-6b17b661-20d3-4420-800c-e2dff53618d1" class="card-deck iteration-0">
+            <div class="row iteration-0">
+                <div class="col-sm-12 mb-3 iteration-0">
+                <div class="card iteration-0">
+                    <div class="card-header  bg-success iteration-0">
+                        <a data-toggle="collapse" href="#" data-target="#collapse-6b17b661-20d3-4420-800c-e2dff53618d1" aria-expanded="false" aria-controls="collapse" id="requests-6b17b661-20d3-4420-800c-e2dff53618d1" class="collapsed text-white z-block">
+                    Iteration: 1 - 11. Game information - search (GetGames) <i class="float-lg-right fa fa-chevron-down" style="padding-top: 5px;"></i>
+                </a>
+                    </div>
+                    <div id="collapse-6b17b661-20d3-4420-800c-e2dff53618d1" class="collapse" aria-labelledby="requests-6b17b661-20d3-4420-800c-e2dff53618d1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Description</h5>
+                                        <div class="dyn-height">
+                                            <code class="renderMarkdown">Public catalogue search: games whose name matches &#x60;book&#x60;. Does not require a session.</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request Method:</strong> <span class="badge-outline-success badge badge-success"> POST</span><br>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request URL:</strong> <a href="https://websitewebapi.craftbet.com/1/api/Main/GetGames" target="_blank">https://websitewebapi.craftbet.com/1/api/Main/GetGames</a><br>
+                                    </div>
+                                </div>
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Response Code:</strong> <span class="float-right badge-outline badge badge-success"> 200 - OK</span><br>
+                                    <span><i class="fas fa-stopwatch"></i></span><strong> Mean time per request:</strong> <span class="float-right badge-outline badge badge-success"> 221ms</span><br>
+                                    <span><i class="fas fa-database"></i></span><strong> Mean size per request:</strong> <span class="float-right badge-outline badge badge-success"> 8.9KB</span><br>
+                                    <hr>
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Test Pass Percentage</h5>
+                                    <div>
+                                        <div class="progress" style="height: 40px;">
+                                            <div class="progress-bar  bg-success" style="width: 100%" role="progressbar">
+                                            <h5 style="padding-top:5px;"><strong>100 %</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-uppercase text-white text-center bg-info">Request Headers</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                            <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-nowrap">Content-Type</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Origin</td>
+                                                        <td class="text-wrap">https://craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Referer</td>
+                                                        <td class="text-wrap">https://craftbet.com/</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">User-Agent</td>
+                                                        <td class="text-wrap">PostmanRuntime/7.39.1</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Cache-Control</td>
+                                                        <td class="text-wrap">no-cache</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Postman-Token</td>
+                                                        <td class="text-wrap">67791ccb-f90e-4d37-8f36-bf678c4f34cf</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Host</td>
+                                                        <td class="text-wrap">websitewebapi.craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept-Encoding</td>
+                                                        <td class="text-wrap">gzip, deflate, br</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Connection</td>
+                                                        <td class="text-wrap">keep-alive</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Content-Length</td>
+                                                        <td class="text-wrap">548</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Body</h5>
+                                        <div class="dyn-height">
+                                            <pre><code id="copyReqText-0" class="prettyPrint">{
+          &quot;PartnerId&quot;: 1,
+          &quot;TimeZone&quot;: 4,
+          &quot;LanguageId&quot;: &quot;en&quot;,
+          &quot;Method&quot;: &quot;GetGames&quot;,
+          &quot;CategoryId&quot;: null,
+          &quot;PageIndex&quot;: 0,
+          &quot;PageSize&quot;: 24,
+          &quot;ProviderIds&quot;: [],
+          &quot;CategoryIds&quot;: [
+            1,
+            0,
+            24,
+            21,
+            26,
+            12,
+            25,
+            13,
+            9,
+            6,
+            19,
+            8,
+            4,
+            16,
+            3,
+            2,
+            10,
+            22
+          ],
+          &quot;Pattern&quot;: &quot;book&quot;,
+          &quot;RequestData&quot;: &quot;{\&quot;Pattern\&quot;: \&quot;book\&quot;, \&quot;ProviderIds\&quot;: [], \&quot;CategoryId\&quot;: null, \&quot;PageIndex\&quot;: 0, \&quot;PageSize\&quot;: 24, \&quot;CategoryIds\&quot;: [1, 0, 24, 21, 26, 12, 25, 13, 9, 6, 19, 8, 4, 16, 3, 2, 10, 22]}&quot;
+        }</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyReqText-0">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Headers</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                        <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-nowrap">Date</td>
+                                                    <td class="text-wrap">Thu, 26 Nov 2026 16:08:05 GMT</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Type</td>
+                                                    <td class="text-wrap">application/json; charset&#x3D;utf-8</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Transfer-Encoding</td>
+                                                    <td class="text-wrap">chunked</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Connection</td>
+                                                    <td class="text-wrap">keep-alive</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Vary</td>
+                                                    <td class="text-wrap">Origin</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Server</td>
+                                                    <td class="text-wrap">cloudflare</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Frame-Options</td>
+                                                    <td class="text-wrap">DENY</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-XSS-Protection</td>
+                                                    <td class="text-wrap">1; mode&#x3D;block</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Content-Type-Options</td>
+                                                    <td class="text-wrap">nosniff</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Strict-Transport-Security</td>
+                                                    <td class="text-wrap">max-age&#x3D;31536000; includeSubDomains</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Origin</td>
+                                                    <td class="text-wrap">https://craftbet.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Headers</td>
+                                                    <td class="text-wrap">Content-Type</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Methods</td>
+                                                    <td class="text-wrap">GET,POST</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Credentials</td>
+                                                    <td class="text-wrap">true</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Powered-By</td>
+                                                    <td class="text-wrap">ASP.NET</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">cf-cache-status</td>
+                                                    <td class="text-wrap">DYNAMIC</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Report-To</td>
+                                                    <td class="text-wrap">{&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800,&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https://a.nel.cloudflare.com/report/v4?s&#x3D;jwjfUGJy%2B4EYPcjOLn0eyNA7NIMc7l7dueIpRjuJn8RllN7dt5xgmsYTqHoHXLk6HkhmeUOn0W25iGr2jvkcLDx8wmBFVzu9DgqlS3NVrZwBRTRhvDSfy7vZyYgHR2kuTuSJzKyfTTj%2FJshtmZwm2p8mQq4YtGwPag%3D%3D&quot;}]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Nel</td>
+                                                    <td class="text-wrap">{&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;success_fraction&quot;:0.0,&quot;max_age&quot;:604800}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Security-Policy</td>
+                                                    <td class="text-wrap">frame-ancestors &#x27;self&#x27; https://craftbet.com https://*.craftbet.com;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Encoding</td>
+                                                    <td class="text-wrap">br</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">CF-RAY</td>
+                                                    <td class="text-wrap">a60a265a5d722924-EVN</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">alt-svc</td>
+                                                    <td class="text-wrap">h3&#x3D;&quot;:443&quot;; ma&#x3D;86400</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Body</h5>
+                                        <div class="dyn-height">
+                                                <pre><code id="copyText-67266b04-b672-4f17-bdf8-deb26bf5a5e9" class="prettyPrint">{&quot;ResponseCode&quot;:0,&quot;Description&quot;:null,&quot;ResponseObject&quot;:{&quot;Games&quot;:[{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOf4Horsemen.png&quot;,&quot;n&quot;:&quot;Book Of 4 Horsemen&quot;,&quot;nn&quot;:&quot;Book Of 4 Horsemen&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259510,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfAlice.png&quot;,&quot;n&quot;:&quot;Book Of Alice&quot;,&quot;nn&quot;:&quot;Book Of Alice&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259511,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfAphrodite.png&quot;,&quot;n&quot;:&quot;Book Of Aphrodite&quot;,&quot;nn&quot;:&quot;Book Of Aphrodite&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259512,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfAphrodite-TGE.png&quot;,&quot;n&quot;:&quot;Book Of Aphrodite - The Golden Era&quot;,&quot;nn&quot;:&quot;Book Of Aphrodite - The Golden Era&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259513,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfAphrodite-TheLoveSpell.png&quot;,&quot;n&quot;:&quot;Book Of Aphrodite - The Love Spell&quot;,&quot;nn&quot;:&quot;Book Of Aphrodite - The Love Spell&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259514,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:20,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/PP/Slots/PP_vs10bookazteck.png&quot;,&quot;n&quot;:&quot;Book of Aztec King&quot;,&quot;nn&quot;:&quot;Book of Aztec King&quot;,&quot;s&quot;:54,&quot;p&quot;:1256559,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;PragmaticPlay&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfBabaYaga.png&quot;,&quot;n&quot;:&quot;Book Of Baba Yaga&quot;,&quot;nn&quot;:&quot;Book Of Baba Yaga&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259515,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:10,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfBabaYaga-WinterSpell.png&quot;,&quot;n&quot;:&quot;Book Of Baba Yaga - Winter Spell&quot;,&quot;nn&quot;:&quot;Book Of Baba Yaga - Winter Spell&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259516,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfCamelot.png&quot;,&quot;n&quot;:&quot;Book Of Camelot&quot;,&quot;nn&quot;:&quot;Book Of Camelot&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259517,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:10,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKBG/Slots/GPKBG_BookOfCats.png&quot;,&quot;n&quot;:&quot;Book of Cats&quot;,&quot;nn&quot;:&quot;Book of Cats&quot;,&quot;s&quot;:1119,&quot;p&quot;:1259123,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;BGaming&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:30,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKBG/Slots/GPKBG_BookOfCatsMegaways.png&quot;,&quot;n&quot;:&quot;Book of Cats Megaways&quot;,&quot;nn&quot;:&quot;Book of Cats Megaways&quot;,&quot;s&quot;:1119,&quot;p&quot;:1259124,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;BGaming&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfChampions.png&quot;,&quot;n&quot;:&quot;Book Of Champions&quot;,&quot;nn&quot;:&quot;Book Of Champions&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259518,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:20,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfChampions-EuropeanGlory.png&quot;,&quot;n&quot;:&quot;Book Of Champions - European Glory&quot;,&quot;nn&quot;:&quot;Book Of Champions - European Glory&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259519,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:20,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfChampions-WorldGlory.png&quot;,&quot;n&quot;:&quot;Book Of Champions - World Glory&quot;,&quot;nn&quot;:&quot;Book Of Champions - World Glory&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259521,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfChampions-Reloaded.png&quot;,&quot;n&quot;:&quot;Book Of Champions Reloaded&quot;,&quot;nn&quot;:&quot;Book Of Champions Reloaded&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259520,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:10,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfClovers.png&quot;,&quot;n&quot;:&quot;Book Of Clovers&quot;,&quot;nn&quot;:&quot;Book Of Clovers&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259522,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:10,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfClovers-Extreme.png&quot;,&quot;n&quot;:&quot;Book Of Clovers - Extreme&quot;,&quot;nn&quot;:&quot;Book Of Clovers - Extreme&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259523,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:20,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfClovers-Reloaded.png&quot;,&quot;n&quot;:&quot;Book Of Clovers -Reloaded&quot;,&quot;nn&quot;:&quot;Book Of Clovers -Reloaded&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259524,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:30,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGods2.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods 2&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods 2&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259525,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:30,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGods2-CE.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods 2 -CE&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods 2 -CE&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259526,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGods2-Reloaded.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods 2 Reloaded&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods 2 Reloaded&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259527,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:30,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGods3.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods 3&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods 3&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259528,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:40,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGods4.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods 4&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods 4&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259530,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null},{&quot;i&quot;:&quot;https://assets.gasea168.com/game/GPKSPINO/Slots/GPKSPINO_SlotMachine_BookOfDemiGodsII-TGE.png&quot;,&quot;n&quot;:&quot;Book Of Demi Gods II - The Golden Era&quot;,&quot;nn&quot;:&quot;Book Of Demi Gods II - The Golden Era&quot;,&quot;s&quot;:1029,&quot;p&quot;:1259531,&quot;sn&quot;:null,&quot;r&quot;:10,&quot;o&quot;:12,&quot;ss&quot;:0,&quot;sp&quot;:&quot;Spinomenal&quot;,&quot;hd&quot;:true,&quot;jp&quot;:null,&quot;c&quot;:[1],&quot;f&quot;:false,&quot;pc&quot;:50,&quot;b&quot;:false,&quot;rt&quot;:null}],&quot;Providers&quot;:[{&quot;Id&quot;:54,&quot;Name&quot;:&quot;PragmaticPlay&quot;,&quot;GamesCount&quot;:6,&quot;Order&quot;:2},{&quot;Id&quot;:7,&quot;Name&quot;:&quot;ZeusPlay&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:1002},{&quot;Id&quot;:1060,&quot;Name&quot;:&quot;1X2Gaming&quot;,&quot;GamesCount&quot;:4,&quot;Order&quot;:10000},{&quot;Id&quot;:1308,&quot;Name&quot;:&quot;Apparat&quot;,&quot;GamesCount&quot;:10,&quot;Order&quot;:10000},{&quot;Id&quot;:1019,&quot;Name&quot;:&quot;BeeFee&quot;,&quot;GamesCount&quot;:3,&quot;Order&quot;:10000},{&quot;Id&quot;:1119,&quot;Name&quot;:&quot;BGaming&quot;,&quot;GamesCount&quot;:10,&quot;Order&quot;:10000},{&quot;Id&quot;:1030,&quot;Name&quot;:&quot;BoomingGames&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1031,&quot;Name&quot;:&quot;Booongo&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1041,&quot;Name&quot;:&quot;ELKStudios&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:19,&quot;Name&quot;:&quot;Endorphina&quot;,&quot;GamesCount&quot;:6,&quot;Order&quot;:10000},{&quot;Id&quot;:63,&quot;Name&quot;:&quot;Evoplay&quot;,&quot;GamesCount&quot;:9,&quot;Order&quot;:10000},{&quot;Id&quot;:1045,&quot;Name&quot;:&quot;Fugaso&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:1266,&quot;Name&quot;:&quot;Galaxsys&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:1043,&quot;Name&quot;:&quot;GameArt&quot;,&quot;GamesCount&quot;:3,&quot;Order&quot;:10000},{&quot;Id&quot;:1124,&quot;Name&quot;:&quot;Gamzix&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1061,&quot;Name&quot;:&quot;Hacksaw&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:11,&quot;Name&quot;:&quot;ISoftBet&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:88,&quot;Name&quot;:&quot;Mancala&quot;,&quot;GamesCount&quot;:3,&quot;Order&quot;:10000},{&quot;Id&quot;:53,&quot;Name&quot;:&quot;Mascot&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:1002,&quot;Name&quot;:&quot;Microgaming&quot;,&quot;GamesCount&quot;:6,&quot;Order&quot;:10000},{&quot;Id&quot;:1052,&quot;Name&quot;:&quot;PGSoft&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1038,&quot;Name&quot;:&quot;Platipus&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:89,&quot;Name&quot;:&quot;PlaynGo&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:1387,&quot;Name&quot;:&quot;RNG-RubyPlay&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:25,&quot;Name&quot;:&quot;SoftGaming&quot;,&quot;GamesCount&quot;:3,&quot;Order&quot;:10000},{&quot;Id&quot;:1089,&quot;Name&quot;:&quot;Spadegaming&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1029,&quot;Name&quot;:&quot;Spinomenal&quot;,&quot;GamesCount&quot;:178,&quot;Order&quot;:10000},{&quot;Id&quot;:1126,&quot;Name&quot;:&quot;Thunderspin&quot;,&quot;GamesCount&quot;:4,&quot;Order&quot;:10000},{&quot;Id&quot;:79,&quot;Name&quot;:&quot;TurboGames&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000},{&quot;Id&quot;:1025,&quot;Name&quot;:&quot;Wazdan&quot;,&quot;GamesCount&quot;:1,&quot;Order&quot;:10000},{&quot;Id&quot;:1034,&quot;Name&quot;:&quot;Yggdrasil&quot;,&quot;GamesCount&quot;:4,&quot;Order&quot;:10000},{&quot;Id&quot;:117,&quot;Name&quot;:&quot;Zenith&quot;,&quot;GamesCount&quot;:2,&quot;Order&quot;:10000}],&quot;Categories&quot;:[{&quot;Id&quot;:1,&quot;Name&quot;:&quot;classic-slots&quot;}],&quot;TotalGamesCount&quot;:276,&quot;LeftGamesCount&quot;:252}}</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyText-67266b04-b672-4f17-bdf8-deb26bf5a5e9">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                <h5 class="card-title text-uppercase text-white text-center bg-info">Test Information</h5>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="datatable table table-hover">
+                                        <thead><tr class="text-center"><th>Name</th><th>Passed</th><th>Failed</th><th>Skipped</th></tr></thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td >HTTP status is 200</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response time is below 5s</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response is JSON</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Platform ResponseCode is 0 (success)</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Games are found</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Page size is respected (&lt;&#x3D; 24)</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Every game name contains the search pattern</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Every game has id, provider and image</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="bg-light">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-center">8</td>
+                                                    <td class="text-center">0</td>
+                                                    <td class="text-center">0</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="row d-none">
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="card-deck">
+                                        <div class="card border-danger" style="width: 50rem;">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-uppercase text-white text-center bg-danger">Test Failure</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                    <thead><tr class="text-nowrap"><th>Test Name</th><th>Assertion Error</th></tr></thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div id="folder-15375706-36c3-4d40-8b30-d10776c3c091" class="card-deck iteration-0">
+            <div class="row iteration-0">
+                <div class="col-sm-12 mb-3 iteration-0">
+                <div class="card iteration-0">
+                    <div class="card-header  bg-success iteration-0">
+                        <a data-toggle="collapse" href="#" data-target="#collapse-15375706-36c3-4d40-8b30-d10776c3c091" aria-expanded="false" aria-controls="collapse" id="requests-15375706-36c3-4d40-8b30-d10776c3c091" class="collapsed text-white z-block">
+                    Iteration: 1 - 12. Game providers (GetGameProviders) <i class="float-lg-right fa fa-chevron-down" style="padding-top: 5px;"></i>
+                </a>
+                    </div>
+                    <div id="collapse-15375706-36c3-4d40-8b30-d10776c3c091" class="collapse" aria-labelledby="requests-15375706-36c3-4d40-8b30-d10776c3c091">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Description</h5>
+                                        <div class="dyn-height">
+                                            <code class="renderMarkdown">Public list of game providers with the number of games for each.</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request Method:</strong> <span class="badge-outline-success badge badge-success"> POST</span><br>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request URL:</strong> <a href="https://websitewebapi.craftbet.com/1/api/Main/GetGameProviders" target="_blank">https://websitewebapi.craftbet.com/1/api/Main/GetGameProviders</a><br>
+                                    </div>
+                                </div>
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Response Code:</strong> <span class="float-right badge-outline badge badge-success"> 200 - OK</span><br>
+                                    <span><i class="fas fa-stopwatch"></i></span><strong> Mean time per request:</strong> <span class="float-right badge-outline badge badge-success"> 367ms</span><br>
+                                    <span><i class="fas fa-database"></i></span><strong> Mean size per request:</strong> <span class="float-right badge-outline badge badge-success"> 7.57KB</span><br>
+                                    <hr>
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Test Pass Percentage</h5>
+                                    <div>
+                                        <div class="progress" style="height: 40px;">
+                                            <div class="progress-bar  bg-success" style="width: 100%" role="progressbar">
+                                            <h5 style="padding-top:5px;"><strong>100 %</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-uppercase text-white text-center bg-info">Request Headers</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                            <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-nowrap">Content-Type</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Origin</td>
+                                                        <td class="text-wrap">https://craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Referer</td>
+                                                        <td class="text-wrap">https://craftbet.com/</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">User-Agent</td>
+                                                        <td class="text-wrap">PostmanRuntime/7.39.1</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Cache-Control</td>
+                                                        <td class="text-wrap">no-cache</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Postman-Token</td>
+                                                        <td class="text-wrap">6d13db60-83da-4e6a-8b8b-aea3170b244e</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Host</td>
+                                                        <td class="text-wrap">websitewebapi.craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept-Encoding</td>
+                                                        <td class="text-wrap">gzip, deflate, br</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Connection</td>
+                                                        <td class="text-wrap">keep-alive</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Content-Length</td>
+                                                        <td class="text-wrap">59</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Body</h5>
+                                        <div class="dyn-height">
+                                            <pre><code id="copyReqText-1" class="prettyPrint">{
+          &quot;PartnerId&quot;: 1,
+          &quot;LanguageId&quot;: &quot;en&quot;,
+          &quot;TimeZone&quot;: 4
+        }</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyReqText-1">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Headers</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                        <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-nowrap">Date</td>
+                                                    <td class="text-wrap">Thu, 26 Nov 2026 16:08:06 GMT</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Type</td>
+                                                    <td class="text-wrap">application/json; charset&#x3D;utf-8</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Transfer-Encoding</td>
+                                                    <td class="text-wrap">chunked</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Connection</td>
+                                                    <td class="text-wrap">keep-alive</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Vary</td>
+                                                    <td class="text-wrap">Origin</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Server</td>
+                                                    <td class="text-wrap">cloudflare</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Frame-Options</td>
+                                                    <td class="text-wrap">DENY</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-XSS-Protection</td>
+                                                    <td class="text-wrap">1; mode&#x3D;block</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Content-Type-Options</td>
+                                                    <td class="text-wrap">nosniff</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Strict-Transport-Security</td>
+                                                    <td class="text-wrap">max-age&#x3D;31536000; includeSubDomains</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Origin</td>
+                                                    <td class="text-wrap">https://craftbet.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Headers</td>
+                                                    <td class="text-wrap">Content-Type</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Methods</td>
+                                                    <td class="text-wrap">GET,POST</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Credentials</td>
+                                                    <td class="text-wrap">true</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Powered-By</td>
+                                                    <td class="text-wrap">ASP.NET</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">cf-cache-status</td>
+                                                    <td class="text-wrap">DYNAMIC</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Report-To</td>
+                                                    <td class="text-wrap">{&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800,&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https://a.nel.cloudflare.com/report/v4?s&#x3D;4Iqq0kkxFpVZrMbnNZPTJ2ii%2Fy3Tir5xZHA%2FS534Ddu0q13QGNXzpiK%2FixeLOWmtehLxfFviRjZVDnuu%2FVw0my%2FNfzkWg4SLNF01OX9b8cQ3T4tj0jw53Zp7QapAuxpvZOFLjoaOE8JVLKT2DScNkQ5Q7d1ycS6ayA%3D%3D&quot;}]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Nel</td>
+                                                    <td class="text-wrap">{&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;success_fraction&quot;:0.0,&quot;max_age&quot;:604800}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Security-Policy</td>
+                                                    <td class="text-wrap">frame-ancestors &#x27;self&#x27; https://craftbet.com https://*.craftbet.com;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Encoding</td>
+                                                    <td class="text-wrap">br</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">CF-RAY</td>
+                                                    <td class="text-wrap">a60a265bfe952924-EVN</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">alt-svc</td>
+                                                    <td class="text-wrap">h3&#x3D;&quot;:443&quot;; ma&#x3D;86400</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Body</h5>
+                                        <div class="dyn-height">
+                                                <pre><code id="copyText-d8289a0b-9259-465c-a4a5-087502f0fc40" class="prettyPrint">{&quot;ResponseCode&quot;:0,&quot;Description&quot;:null,&quot;ResponseObject&quot;:{&quot;Providers&quot;:[{&quot;Id&quot;:21,&quot;Name&quot;:&quot;Evolution&quot;,&quot;Order&quot;:1,&quot;GamesCount&quot;:323},{&quot;Id&quot;:54,&quot;Name&quot;:&quot;PragmaticPlay&quot;,&quot;Order&quot;:2,&quot;GamesCount&quot;:505},{&quot;Id&quot;:5,&quot;Name&quot;:&quot;Ezugi&quot;,&quot;Order&quot;:1000,&quot;GamesCount&quot;:85},{&quot;Id&quot;:6,&quot;Name&quot;:&quot;TomHorn&quot;,&quot;Order&quot;:1001,&quot;GamesCount&quot;:33},{&quot;Id&quot;:7,&quot;Name&quot;:&quot;ZeusPlay&quot;,&quot;Order&quot;:1002,&quot;GamesCount&quot;:31},{&quot;Id&quot;:1060,&quot;Name&quot;:&quot;1X2Gaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:100},{&quot;Id&quot;:1214,&quot;Name&quot;:&quot;3oaks&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1206,&quot;Name&quot;:&quot;4ThePlayer&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:4},{&quot;Id&quot;:1268,&quot;Name&quot;:&quot;7777Gaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1176,&quot;Name&quot;:&quot;7Mojos&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:33},{&quot;Id&quot;:1141,&quot;Name&quot;:&quot;AbsoluteLiveGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:8},{&quot;Id&quot;:1010,&quot;Name&quot;:&quot;Amatic&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:77},{&quot;Id&quot;:1151,&quot;Name&quot;:&quot;Amusnet&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:8},{&quot;Id&quot;:1026,&quot;Name&quot;:&quot;Apollo&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:1308,&quot;Name&quot;:&quot;Apparat&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:46},{&quot;Id&quot;:1156,&quot;Name&quot;:&quot;AvatarUX&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:9},{&quot;Id&quot;:1209,&quot;Name&quot;:&quot;Aviatrix&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:61,&quot;Name&quot;:&quot;AWC&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1019,&quot;Name&quot;:&quot;BeeFee&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:62},{&quot;Id&quot;:1042,&quot;Name&quot;:&quot;BetConstruct&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:99},{&quot;Id&quot;:4,&quot;Name&quot;:&quot;BetGames&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1004,&quot;Name&quot;:&quot;Betsoft&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:16},{&quot;Id&quot;:1150,&quot;Name&quot;:&quot;BetSolutions&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:1119,&quot;Name&quot;:&quot;BGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:359},{&quot;Id&quot;:1405,&quot;Name&quot;:&quot;Booming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:38},{&quot;Id&quot;:1030,&quot;Name&quot;:&quot;BoomingGames&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:99},{&quot;Id&quot;:1031,&quot;Name&quot;:&quot;Booongo&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:21},{&quot;Id&quot;:1340,&quot;Name&quot;:&quot;Creedroomz&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:140},{&quot;Id&quot;:1122,&quot;Name&quot;:&quot;DragonGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1359,&quot;Name&quot;:&quot;Eeze&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1006,&quot;Name&quot;:&quot;EGT&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:157},{&quot;Id&quot;:1305,&quot;Name&quot;:&quot;EGTDigital&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:24},{&quot;Id&quot;:1282,&quot;Name&quot;:&quot;EGTJackpot&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1406,&quot;Name&quot;:&quot;ElCasino&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:13},{&quot;Id&quot;:1041,&quot;Name&quot;:&quot;ELKStudios&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:72},{&quot;Id&quot;:19,&quot;Name&quot;:&quot;Endorphina&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:192},{&quot;Id&quot;:1369,&quot;Name&quot;:&quot;EvolutionGH&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:84},{&quot;Id&quot;:1098,&quot;Name&quot;:&quot;EvolutionSpecial&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:29},{&quot;Id&quot;:63,&quot;Name&quot;:&quot;Evoplay&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:253},{&quot;Id&quot;:1255,&quot;Name&quot;:&quot;FortuneFactory&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1366,&quot;Name&quot;:&quot;Ftv&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1045,&quot;Name&quot;:&quot;Fugaso&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:1266,&quot;Name&quot;:&quot;Galaxsys&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:63},{&quot;Id&quot;:1043,&quot;Name&quot;:&quot;GameArt&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:54},{&quot;Id&quot;:1124,&quot;Name&quot;:&quot;Gamzix&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:54},{&quot;Id&quot;:1007,&quot;Name&quot;:&quot;Genii&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:96},{&quot;Id&quot;:1310,&quot;Name&quot;:&quot;GlobalBet&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1094,&quot;Name&quot;:&quot;GoldenRace&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:7},{&quot;Id&quot;:1005,&quot;Name&quot;:&quot;Greentube&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:15},{&quot;Id&quot;:62,&quot;Name&quot;:&quot;Habanero&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:380},{&quot;Id&quot;:1061,&quot;Name&quot;:&quot;Hacksaw&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:205},{&quot;Id&quot;:1327,&quot;Name&quot;:&quot;Iconic21&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1356,&quot;Name&quot;:&quot;ImagineLive&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:29},{&quot;Id&quot;:100,&quot;Name&quot;:&quot;Internal&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:11,&quot;Name&quot;:&quot;ISoftBet&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:130},{&quot;Id&quot;:1161,&quot;Name&quot;:&quot;KAGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:97},{&quot;Id&quot;:60,&quot;Name&quot;:&quot;Kiron&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:20},{&quot;Id&quot;:1410,&quot;Name&quot;:&quot;LiveVegas&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:46},{&quot;Id&quot;:88,&quot;Name&quot;:&quot;Mancala&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:56},{&quot;Id&quot;:53,&quot;Name&quot;:&quot;Mascot&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:65},{&quot;Id&quot;:1028,&quot;Name&quot;:&quot;Merkur&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:25},{&quot;Id&quot;:1002,&quot;Name&quot;:&quot;Microgaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:323},{&quot;Id&quot;:1047,&quot;Name&quot;:&quot;Mr.Slotty&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:55},{&quot;Id&quot;:1003,&quot;Name&quot;:&quot;NetEnt&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:109},{&quot;Id&quot;:1404,&quot;Name&quot;:&quot;NoLimit&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1032,&quot;Name&quot;:&quot;NoLimitCity&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:4},{&quot;Id&quot;:1009,&quot;Name&quot;:&quot;Novomatic&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:111},{&quot;Id&quot;:1113,&quot;Name&quot;:&quot;NucleusGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:1120,&quot;Name&quot;:&quot;Orbital&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:8},{&quot;Id&quot;:1341,&quot;Name&quot;:&quot;PascalGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:4},{&quot;Id&quot;:1316,&quot;Name&quot;:&quot;Pateplay&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:73},{&quot;Id&quot;:1347,&quot;Name&quot;:&quot;PeterNSons&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:6},{&quot;Id&quot;:1052,&quot;Name&quot;:&quot;PGSoft&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:287},{&quot;Id&quot;:1038,&quot;Name&quot;:&quot;Platipus&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:74},{&quot;Id&quot;:123,&quot;Name&quot;:&quot;PlayEola&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:89,&quot;Name&quot;:&quot;PlaynGo&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:238},{&quot;Id&quot;:1033,&quot;Name&quot;:&quot;Playson&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1001,&quot;Name&quot;:&quot;PlayTech&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1409,&quot;Name&quot;:&quot;Pragmatic&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:45},{&quot;Id&quot;:1117,&quot;Name&quot;:&quot;PragmaticLive&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:112},{&quot;Id&quot;:1085,&quot;Name&quot;:&quot;PushGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:11},{&quot;Id&quot;:1024,&quot;Name&quot;:&quot;QuickSpin&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:28},{&quot;Id&quot;:1035,&quot;Name&quot;:&quot;RedTiger&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1346,&quot;Name&quot;:&quot;ReelPlaySlots&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:15},{&quot;Id&quot;:1058,&quot;Name&quot;:&quot;Reeltime&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:11},{&quot;Id&quot;:1321,&quot;Name&quot;:&quot;Reflex&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:8},{&quot;Id&quot;:1039,&quot;Name&quot;:&quot;RelaxGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1121,&quot;Name&quot;:&quot;Rival&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:160},{&quot;Id&quot;:1388,&quot;Name&quot;:&quot;RNG-ELK-Studios&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:1387,&quot;Name&quot;:&quot;RNG-RubyPlay&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:30},{&quot;Id&quot;:1374,&quot;Name&quot;:&quot;RocketMan&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1114,&quot;Name&quot;:&quot;SAGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:69},{&quot;Id&quot;:1260,&quot;Name&quot;:&quot;Scientific&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:8,&quot;Name&quot;:&quot;Singular&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:10,&quot;Name&quot;:&quot;SkyWind&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:2},{&quot;Id&quot;:30,&quot;Name&quot;:&quot;SmartSoft&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:25,&quot;Name&quot;:&quot;SoftGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:30},{&quot;Id&quot;:1089,&quot;Name&quot;:&quot;Spadegaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:182},{&quot;Id&quot;:1029,&quot;Name&quot;:&quot;Spinomenal&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1024},{&quot;Id&quot;:1149,&quot;Name&quot;:&quot;Spribe&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:20},{&quot;Id&quot;:121,&quot;Name&quot;:&quot;SwipeGames&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:1126,&quot;Name&quot;:&quot;Thunderspin&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:33},{&quot;Id&quot;:95,&quot;Name&quot;:&quot;TimelessTech&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:79,&quot;Name&quot;:&quot;TurboGames&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:68},{&quot;Id&quot;:22,&quot;Name&quot;:&quot;TvBet&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:15},{&quot;Id&quot;:1051,&quot;Name&quot;:&quot;VivoGaming&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1025,&quot;Name&quot;:&quot;Wazdan&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:9},{&quot;Id&quot;:124,&quot;Name&quot;:&quot;Winfinity&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1330,&quot;Name&quot;:&quot;XPG&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:3},{&quot;Id&quot;:1034,&quot;Name&quot;:&quot;Yggdrasil&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:325},{&quot;Id&quot;:1386,&quot;Name&quot;:&quot;Yoriginal-Games&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:1},{&quot;Id&quot;:117,&quot;Name&quot;:&quot;Zenith&quot;,&quot;Order&quot;:10000,&quot;GamesCount&quot;:885},{&quot;Id&quot;:1,&quot;Name&quot;:&quot;IQSoft&quot;,&quot;Order&quot;:10001,&quot;GamesCount&quot;:32}],&quot;Categories&quot;:[{&quot;Id&quot;:-1,&quot;Name&quot;:&quot;All Games&quot;},{&quot;Id&quot;:1,&quot;Name&quot;:&quot;classic-slots&quot;},{&quot;Id&quot;:4,&quot;Name&quot;:&quot;table-games&quot;},{&quot;Id&quot;:5,&quot;Name&quot;:&quot;virtual-games&quot;},{&quot;Id&quot;:6,&quot;Name&quot;:&quot;skill-games&quot;},{&quot;Id&quot;:7,&quot;Name&quot;:&quot;live-casino&quot;},{&quot;Id&quot;:8,&quot;Name&quot;:&quot;specials&quot;},{&quot;Id&quot;:10,&quot;Name&quot;:&quot;Sportsbook&quot;},{&quot;Id&quot;:11,&quot;Name&quot;:&quot;Slots&quot;},{&quot;Id&quot;:12,&quot;Name&quot;:&quot;Sportsbook&quot;},{&quot;Id&quot;:16,&quot;Name&quot;:&quot;top-games&quot;},{&quot;Id&quot;:20,&quot;Name&quot;:&quot;e-game&quot;},{&quot;Id&quot;:21,&quot;Name&quot;:&quot;fish game&quot;},{&quot;Id&quot;:24,&quot;Name&quot;:&quot;Dorps&amp;Wins&quot;},{&quot;Id&quot;:25,&quot;Name&quot;:&quot;Megaways&quot;},{&quot;Id&quot;:26,&quot;Name&quot;:&quot;Favorites&quot;},{&quot;Id&quot;:28,&quot;Name&quot;:&quot;poker&quot;},{&quot;Id&quot;:29,&quot;Name&quot;:&quot;blackjack&quot;},{&quot;Id&quot;:30,&quot;Name&quot;:&quot;baccarat&quot;},{&quot;Id&quot;:32,&quot;Name&quot;:&quot;Megaways&quot;},{&quot;Id&quot;:33,&quot;Name&quot;:&quot;exclusive&quot;},{&quot;Id&quot;:34,&quot;Name&quot;:&quot;new-games&quot;},{&quot;Id&quot;:45,&quot;Name&quot;:&quot;crash-games&quot;},{&quot;Id&quot;:48,&quot;Name&quot;:&quot;BGaming&quot;},{&quot;Id&quot;:50,&quot;Name&quot;:&quot;rocketbet recommendations&quot;},{&quot;Id&quot;:72,&quot;Name&quot;:&quot;ball-game&quot;},{&quot;Id&quot;:100,&quot;Name&quot;:&quot;Baccarat Live&quot;},{&quot;Id&quot;:108,&quot;Name&quot;:&quot;Craps&quot;},{&quot;Id&quot;:110,&quot;Name&quot;:&quot;prag&quot;},{&quot;Id&quot;:116,&quot;Name&quot;:&quot;top-live-games&quot;},{&quot;Id&quot;:152,&quot;Name&quot;:&quot;Specials&quot;}]}}</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyText-d8289a0b-9259-465c-a4a5-087502f0fc40">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                <h5 class="card-title text-uppercase text-white text-center bg-info">Test Information</h5>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="datatable table table-hover">
+                                        <thead><tr class="text-center"><th>Name</th><th>Passed</th><th>Failed</th><th>Skipped</th></tr></thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td >HTTP status is 200</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response time is below 5s</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response is JSON</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Platform ResponseCode is 0 (success)</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Providers list is not empty</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Providers have id, name and positive games count</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Provider ids are unique</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="bg-light">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-center">7</td>
+                                                    <td class="text-center">0</td>
+                                                    <td class="text-center">0</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="row d-none">
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="card-deck">
+                                        <div class="card border-danger" style="width: 50rem;">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-uppercase text-white text-center bg-danger">Test Failure</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                    <thead><tr class="text-nowrap"><th>Test Name</th><th>Assertion Error</th></tr></thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div id="folder-6be7c2e8-3238-4b31-aa7c-6ba0a8218546" class="card-deck iteration-0">
+            <div class="row iteration-0">
+                <div class="col-sm-12 mb-3 iteration-0">
+                <div class="card iteration-0">
+                    <div class="card-header  bg-success iteration-0">
+                        <a data-toggle="collapse" href="#" data-target="#collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546" aria-expanded="false" aria-controls="collapse" id="requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546" class="collapsed text-white z-block">
+                    Iteration: 1 - 13. Latest winning bets - GET (getbets) <i class="float-lg-right fa fa-chevron-down" style="padding-top: 5px;"></i>
+                </a>
+                    </div>
+                    <div id="collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546" class="collapse" aria-labelledby="requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Description</h5>
+                                        <div class="dyn-height">
+                                            <code class="renderMarkdown">Public GET endpoint used by the home page &#x27;Wins&#x27; widget. Shows that bet data is masked for other users.</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request Method:</strong> <span class="badge-outline-success badge badge-success"> GET</span><br>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request URL:</strong> <a href="https://websitewebapi.craftbet.com/1/api/Main/getbets?timeZone&#x3D;4&amp;languageId&#x3D;en&amp;winnersonly&#x3D;true" target="_blank">https://websitewebapi.craftbet.com/1/api/Main/getbets?timeZone&#x3D;4&amp;languageId&#x3D;en&amp;winnersonly&#x3D;true</a><br>
+                                    </div>
+                                </div>
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Response Code:</strong> <span class="float-right badge-outline badge badge-success"> 200 - OK</span><br>
+                                    <span><i class="fas fa-stopwatch"></i></span><strong> Mean time per request:</strong> <span class="float-right badge-outline badge badge-success"> 369ms</span><br>
+                                    <span><i class="fas fa-database"></i></span><strong> Mean size per request:</strong> <span class="float-right badge-outline badge badge-success"> 9.38KB</span><br>
+                                    <hr>
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Test Pass Percentage</h5>
+                                    <div>
+                                        <div class="progress" style="height: 40px;">
+                                            <div class="progress-bar  bg-success" style="width: 100%" role="progressbar">
+                                            <h5 style="padding-top:5px;"><strong>100 %</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-uppercase text-white text-center bg-info">Request Headers</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                            <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-nowrap">Content-Type</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept</td>
+                                                        <td class="text-wrap">application/json</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Origin</td>
+                                                        <td class="text-wrap">https://craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Referer</td>
+                                                        <td class="text-wrap">https://craftbet.com/</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">User-Agent</td>
+                                                        <td class="text-wrap">PostmanRuntime/7.39.1</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Cache-Control</td>
+                                                        <td class="text-wrap">no-cache</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Postman-Token</td>
+                                                        <td class="text-wrap">cae01ca9-81cb-40ab-863d-624ff42e0fdf</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Host</td>
+                                                        <td class="text-wrap">websitewebapi.craftbet.com</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept-Encoding</td>
+                                                        <td class="text-wrap">gzip, deflate, br</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Connection</td>
+                                                        <td class="text-wrap">keep-alive</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Headers</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                        <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-nowrap">Date</td>
+                                                    <td class="text-wrap">Thu, 26 Nov 2026 16:08:06 GMT</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Type</td>
+                                                    <td class="text-wrap">application/json; charset&#x3D;utf-8</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Transfer-Encoding</td>
+                                                    <td class="text-wrap">chunked</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Connection</td>
+                                                    <td class="text-wrap">keep-alive</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Vary</td>
+                                                    <td class="text-wrap">Origin</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Server</td>
+                                                    <td class="text-wrap">cloudflare</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Frame-Options</td>
+                                                    <td class="text-wrap">DENY</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-XSS-Protection</td>
+                                                    <td class="text-wrap">1; mode&#x3D;block</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Content-Type-Options</td>
+                                                    <td class="text-wrap">nosniff</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Strict-Transport-Security</td>
+                                                    <td class="text-wrap">max-age&#x3D;31536000; includeSubDomains</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Origin</td>
+                                                    <td class="text-wrap">https://craftbet.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Headers</td>
+                                                    <td class="text-wrap">Content-Type</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Methods</td>
+                                                    <td class="text-wrap">GET,POST</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Access-Control-Allow-Credentials</td>
+                                                    <td class="text-wrap">true</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Powered-By</td>
+                                                    <td class="text-wrap">ASP.NET</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">cf-cache-status</td>
+                                                    <td class="text-wrap">DYNAMIC</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Report-To</td>
+                                                    <td class="text-wrap">{&quot;group&quot;:&quot;cf-nel&quot;,&quot;max_age&quot;:604800,&quot;endpoints&quot;:[{&quot;url&quot;:&quot;https://a.nel.cloudflare.com/report/v4?s&#x3D;eJe6MYCKB3S%2F0krmu59KG8T10cKAkctK7dV7HZE5PxFoEDZRzBP366SNAO6OYxViIccC4MJBAZrpao88wH5l48nwlJSgntoCXabOwjfde3x1mo3ktig5pVd%2BlsuFI4IAaxhAUo4osE2tnYjn8NCHe1Papb2MNrlpnQ%3D%3D&quot;}]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Nel</td>
+                                                    <td class="text-wrap">{&quot;report_to&quot;:&quot;cf-nel&quot;,&quot;success_fraction&quot;:0.0,&quot;max_age&quot;:604800}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Security-Policy</td>
+                                                    <td class="text-wrap">frame-ancestors &#x27;self&#x27; https://craftbet.com https://*.craftbet.com;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Encoding</td>
+                                                    <td class="text-wrap">br</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">CF-RAY</td>
+                                                    <td class="text-wrap">a60a265ec8702924-EVN</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">alt-svc</td>
+                                                    <td class="text-wrap">h3&#x3D;&quot;:443&quot;; ma&#x3D;86400</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Body</h5>
+                                        <div class="dyn-height">
+                                                <pre><code id="copyText-ede5c3ac-7236-42d2-bb27-1e1b59a29eb3" class="prettyPrint">{&quot;ResponseCode&quot;:0,&quot;Description&quot;:null,&quot;ResponseObject&quot;:[{&quot;BetDocumentId&quot;:2889580873,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:2,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T16:19:25.263&quot;,&quot;WinDate&quot;:&quot;2026-11-25T16:19:34.889&quot;,&quot;ClientId&quot;:2875368,&quot;UserName&quot;:&quot;****5368&quot;,&quot;ProductId&quot;:1371076,&quot;ProductName&quot;:&quot;LuckyColor&quot;,&quot;Profit&quot;:-1,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1371076.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889579865,&quot;State&quot;:2,&quot;BetAmount&quot;:3,&quot;WinAmount&quot;:2,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T16:16:40.065&quot;,&quot;WinDate&quot;:&quot;2026-11-25T16:16:45.831&quot;,&quot;ClientId&quot;:2875368,&quot;UserName&quot;:&quot;****5368&quot;,&quot;ProductId&quot;:1371076,&quot;ProductName&quot;:&quot;LuckyColor&quot;,&quot;Profit&quot;:1,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1371076.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889579743,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:2,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T16:16:19.231&quot;,&quot;WinDate&quot;:&quot;2026-11-25T16:16:30.126&quot;,&quot;ClientId&quot;:2875368,&quot;UserName&quot;:&quot;****5368&quot;,&quot;ProductId&quot;:1371076,&quot;ProductName&quot;:&quot;LuckyColor&quot;,&quot;Profit&quot;:-1,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1371076.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889579602,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:2,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T16:15:59.87&quot;,&quot;WinDate&quot;:&quot;2026-11-25T16:16:09.105&quot;,&quot;ClientId&quot;:2875368,&quot;UserName&quot;:&quot;****5368&quot;,&quot;ProductId&quot;:1371076,&quot;ProductName&quot;:&quot;LuckyColor&quot;,&quot;Profit&quot;:-1,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1371076.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889495362,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.7271,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T13:19:00.371&quot;,&quot;WinDate&quot;:&quot;2026-11-25T15:58:10.221&quot;,&quot;ClientId&quot;:2202952,&quot;UserName&quot;:&quot;****n&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.7271,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889494462,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.7271,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T13:16:47.795&quot;,&quot;WinDate&quot;:&quot;2026-11-25T15:58:10.064&quot;,&quot;ClientId&quot;:2202952,&quot;UserName&quot;:&quot;****n&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.7271,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889464657,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:2.9088,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T12:18:17.319&quot;,&quot;WinDate&quot;:&quot;2026-11-25T14:11:30.96&quot;,&quot;ClientId&quot;:2202952,&quot;UserName&quot;:&quot;****n&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-1.9088,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889350902,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:4.5177,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T07:02:41.325&quot;,&quot;WinDate&quot;:&quot;2026-11-25T09:38:23.634&quot;,&quot;ClientId&quot;:1500198,&quot;UserName&quot;:&quot;****ntest&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-3.5177,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889350425,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.0908,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T07:01:21.053&quot;,&quot;WinDate&quot;:&quot;2026-11-25T08:05:44.054&quot;,&quot;ClientId&quot;:1500198,&quot;UserName&quot;:&quot;****ntest&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.0908,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889350291,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.0908,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T07:00:52.716&quot;,&quot;WinDate&quot;:&quot;2026-11-25T08:05:44.226&quot;,&quot;ClientId&quot;:1500198,&quot;UserName&quot;:&quot;****ntest&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.0908,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889350221,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.0908,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T07:00:38.575&quot;,&quot;WinDate&quot;:&quot;2026-11-25T08:05:43.976&quot;,&quot;ClientId&quot;:1500198,&quot;UserName&quot;:&quot;****ntest&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.0908,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2889350051,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:1.0908,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-25T07:00:04.978&quot;,&quot;WinDate&quot;:&quot;2026-11-25T08:05:43.867&quot;,&quot;ClientId&quot;:1500198,&quot;UserName&quot;:&quot;****ntest&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-0.0908,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;EUR&quot;,&quot;CurrencySymbol&quot;:&quot;€&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888810211,&quot;State&quot;:2,&quot;BetAmount&quot;:5,&quot;WinAmount&quot;:4.6135,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-24T11:20:49.344&quot;,&quot;WinDate&quot;:&quot;2026-11-24T11:23:34.33&quot;,&quot;ClientId&quot;:2756304,&quot;UserName&quot;:&quot;****6304&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:0.3865,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888807592,&quot;State&quot;:2,&quot;BetAmount&quot;:3,&quot;WinAmount&quot;:2.7953,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-24T11:09:56.546&quot;,&quot;WinDate&quot;:&quot;2026-11-24T11:13:51.118&quot;,&quot;ClientId&quot;:2756304,&quot;UserName&quot;:&quot;****6304&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:0.2047,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888805891,&quot;State&quot;:2,&quot;BetAmount&quot;:1,&quot;WinAmount&quot;:2.6088,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-24T11:03:44.873&quot;,&quot;WinDate&quot;:&quot;2026-11-24T12:55:51.836&quot;,&quot;ClientId&quot;:2756304,&quot;UserName&quot;:&quot;****6304&quot;,&quot;ProductId&quot;:6,&quot;ProductName&quot;:&quot;Sports&quot;,&quot;Profit&quot;:-1.6088,&quot;ProviderId&quot;:100,&quot;ProviderName&quot;:&quot;Internal&quot;,&quot;SelectionsCount&quot;:1,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[18],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/sport.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888778478,&quot;State&quot;:2,&quot;BetAmount&quot;:5,&quot;WinAmount&quot;:5.9,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-24T09:18:41.181&quot;,&quot;WinDate&quot;:&quot;2026-11-24T09:19:51.536&quot;,&quot;ClientId&quot;:2875368,&quot;UserName&quot;:&quot;****5368&quot;,&quot;ProductId&quot;:1242272,&quot;ProductName&quot;:&quot;ChickenCross&quot;,&quot;Profit&quot;:-0.9,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1242272.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888273141,&quot;State&quot;:2,&quot;BetAmount&quot;:50,&quot;WinAmount&quot;:100,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-23T14:28:46.404&quot;,&quot;WinDate&quot;:&quot;2026-11-23T14:29:23.575&quot;,&quot;ClientId&quot;:1910587,&quot;UserName&quot;:&quot;****aRUB&quot;,&quot;ProductId&quot;:1023,&quot;ProductName&quot;:&quot;BlackJack&quot;,&quot;Profit&quot;:-50,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;RUB&quot;,&quot;CurrencySymbol&quot;:&quot;₽&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1023.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888232005,&quot;State&quot;:2,&quot;BetAmount&quot;:5,&quot;WinAmount&quot;:5.1,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-23T13:14:28.861&quot;,&quot;WinDate&quot;:&quot;2026-11-23T13:14:36.413&quot;,&quot;ClientId&quot;:2277351,&quot;UserName&quot;:&quot;****7351&quot;,&quot;ProductId&quot;:1242272,&quot;ProductName&quot;:&quot;ChickenCross&quot;,&quot;Profit&quot;:-0.1,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1242272.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null},{&quot;BetDocumentId&quot;:2888216489,&quot;State&quot;:2,&quot;BetAmount&quot;:5,&quot;WinAmount&quot;:9,&quot;PossibleWin&quot;:null,&quot;BetTypeId&quot;:1,&quot;BetDate&quot;:&quot;2026-11-23T12:41:59.058&quot;,&quot;WinDate&quot;:&quot;2026-11-23T12:42:02.543&quot;,&quot;ClientId&quot;:2277351,&quot;UserName&quot;:&quot;****7351&quot;,&quot;ProductId&quot;:1010,&quot;ProductName&quot;:&quot;Minesweeper&quot;,&quot;Profit&quot;:-4,&quot;ProviderId&quot;:1,&quot;ProviderName&quot;:&quot;IQSoft&quot;,&quot;SelectionsCount&quot;:null,&quot;CurrencyId&quot;:&quot;USD&quot;,&quot;CurrencySymbol&quot;:&quot;$&quot;,&quot;Categories&quot;:[23],&quot;ProductExternalId&quot;:null,&quot;ImageUrl&quot;:&quot;iqsoft/web/1010.png&quot;,&quot;DeviceType&quot;:0,&quot;GhostMode&quot;:false,&quot;WebImageUrl&quot;:null}]}</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyText-ede5c3ac-7236-42d2-bb27-1e1b59a29eb3">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                <h5 class="card-title text-uppercase text-white text-center bg-info">Test Information</h5>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="datatable table table-hover">
+                                        <thead><tr class="text-center"><th>Name</th><th>Passed</th><th>Failed</th><th>Skipped</th></tr></thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td >HTTP status is 200</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response time is below 5s</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response is JSON</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Platform ResponseCode is 0 (success)</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Bets list is returned</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Only winning bets are returned (winnersonly&#x3D;true)</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Other users names are masked</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Each bet has product and currency</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="bg-light">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-center">8</td>
+                                                    <td class="text-center">0</td>
+                                                    <td class="text-center">0</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="row d-none">
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="card-deck">
+                                        <div class="card border-danger" style="width: 50rem;">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-uppercase text-white text-center bg-danger">Test Failure</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                    <thead><tr class="text-nowrap"><th>Test Name</th><th>Assertion Error</th></tr></thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Set slider initial position depending on the localstorage state -->
+
+<script>
+(function () {
+  var sliderChecked = true;
+  if (localStorage.getItem('theme') === 'theme-light') {
+    setTheme('theme-light');
+    sliderChecked = false;
+  } else {
+    setTheme('theme-dark');
+    sliderChecked = true;
+  }
+  $(document).ready( function () {
+    document.getElementById('slider').checked = sliderChecked;
+  });
+})();
+</script>
+
+<!-- Data Table Configuration -->
+
+<script>
+$(document).ready( function () {
+    $('.datatable').DataTable({
+        "retrieve": true,
+        "paging": false,
+        "info": false,
+        "fixedColumns":   {
+            "heightMatch": 'none'
+        }
+    });
+});
+</script>
+
+<!-- Tooltip Configuration -->
+
+<script>
+$(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger : 'hover'
+    })
+})
+</script>
+
+<!-- Show/Hide The Folders -->
+
+<script>
+$('#openAll').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#folder-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0').removeClass('collapsed')
+            $('#folder-collapse-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0').addClass('show')
+        $('#openAll').html("Collapse Folders");
+        break;
+    case 2:
+            $('#folder-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0').addClass('collapsed')
+            $('#folder-collapse-069245f1-1568-43bb-8b53-5675ee70dc9a-iteration-0').removeClass('show')
+        $('#openAll').html("Expand Folders");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Requests -->
+
+<script>
+$('#openAllRequests').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#requests-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('collapsed')
+            $('#collapse-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('collapsed')
+            $('#requests-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('show')
+            $('#collapse-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('show')
+            $('#requests-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('collapsed')
+            $('#collapse-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('collapsed')
+            $('#requests-15375706-36c3-4d40-8b30-d10776c3c091').addClass('show')
+            $('#collapse-15375706-36c3-4d40-8b30-d10776c3c091').addClass('show')
+            $('#requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('collapsed')
+            $('#collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('collapsed')
+            $('#requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('show')
+            $('#collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('show')
+        $('#openAllRequests').html("Collapse Requests");
+        break;
+    case 2:
+            $('#requests-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('collapsed')
+            $('#collapse-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('collapsed')
+            $('#requests-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('show')
+            $('#collapse-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('show')
+            $('#requests-15375706-36c3-4d40-8b30-d10776c3c091').addClass('collapsed')
+            $('#collapse-15375706-36c3-4d40-8b30-d10776c3c091').addClass('collapsed')
+            $('#requests-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('show')
+            $('#collapse-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('show')
+            $('#requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('collapsed')
+            $('#collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('collapsed')
+            $('#requests-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('show')
+            $('#collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('show')
+        $('#openAllRequests').html("Expand Requests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Skipped Tests -->
+
+<script>
+$('#openAllSkipped').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#skipped-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('collapsed')
+            $('#skipped-collapse-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('collapsed')
+            $('#skipped-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('show')
+            $('#skipped-collapse-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('show')
+            $('#skipped-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('collapsed')
+            $('#skipped-collapse-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('collapsed')
+            $('#skipped-15375706-36c3-4d40-8b30-d10776c3c091').addClass('show')
+            $('#skipped-collapse-15375706-36c3-4d40-8b30-d10776c3c091').addClass('show')
+            $('#skipped-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('collapsed')
+            $('#skipped-collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('collapsed')
+            $('#skipped-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('show')
+            $('#skipped-collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('show')
+        $('#openAllSkipped').html("Collapse All Skipped Tests");
+        break;
+    case 2:
+            $('#skipped-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('collapsed')
+            $('#skipped-collapse-6b17b661-20d3-4420-800c-e2dff53618d1').addClass('collapsed')
+            $('#skipped-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('show')
+            $('#skipped-collapse-6b17b661-20d3-4420-800c-e2dff53618d1').removeClass('show')
+            $('#skipped-15375706-36c3-4d40-8b30-d10776c3c091').addClass('collapsed')
+            $('#skipped-collapse-15375706-36c3-4d40-8b30-d10776c3c091').addClass('collapsed')
+            $('#skipped-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('show')
+            $('#skipped-collapse-15375706-36c3-4d40-8b30-d10776c3c091').removeClass('show')
+            $('#skipped-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('collapsed')
+            $('#skipped-collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').addClass('collapsed')
+            $('#skipped-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('show')
+            $('#skipped-collapse-6be7c2e8-3238-4b31-aa7c-6ba0a8218546').removeClass('show')
+        $('#openAllSkipped').html("Expand All Skipped Tests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Failures -->
+
+<script>
+$('#openAllFailed').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+let failedItemContent
+let failedItemHeading
+switch (clickCount){
+    case 1:
+        $('#openAllFailed').html("Collapse All Failed Tests");
+        break;
+    case 2:
+        $('#openAllFailed').html("Expand All Failed Tests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Pretty Print the Response Body-->
+
+<script>
+function isJSON(data)
+{
+    var ret = true;
+    try {
+            JSON.parse(data);
+    }catch(e) {
+            ret = false;
+    }
+    return ret;
+}
+
+function isXML(data)
+{
+    return (data.length > 0 && data[0] === '<');
+}
+
+// see https://gist.github.com/sente/1083506/d2834134cd070dbcc08bf42ee27dabb746a1c54d#gistcomment-2254622
+function formatXML(data) {
+    const PADDING = ' '.repeat(2); // set desired indent size here
+    const reg = /(>)(<)(\/*)/g;
+    let pad = 0;
+    xml = data.replace(reg, '$1\r\n$2$3');
+
+    return xml.split('\r\n').map((node, index) => {
+        let indent = 0;
+        if (node.match(/.+<\/\w[^>]*>$/)) {
+            indent = 0;
+        } else if (node.match(/^<\/\w/) && pad > 0) {
+            pad -= 1;
+        } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+            indent = 1;
+        } else {
+            indent = 0;
+        }
+
+        pad += indent;
+        return PADDING.repeat(pad - indent) + node;
+    }).join('\r\n');
+}
+
+$(".prettyPrint").each(function () {
+        var data = $(this).text();
+        // Verify whether data is JSON
+        if(isJSON(data))
+        {
+                obj = JSON.parse(data);
+                data = JSON.stringify(obj, null, 2);
+        }
+        else if(isXML(data)) {
+            data = formatXML(data);
+        }
+        $(this).text(data);
+});
+</script>
+
+
+<!-- Copy Response Body To Clipboard -->
+
+<script>
+    var clipboard = new ClipboardJS('.copyButton');
+
+    clipboard.on('success', function(e) {
+        e.clearSelection();
+        $(".copyButton").addClass("bg-success text-white")
+        e.trigger.textContent = '✔ Copied!';
+        window.setTimeout(function() {
+            $(".copyButton").removeClass("bg-success text-white")
+            e.trigger.textContent = 'Copy to Clipboard';
+        }, 2000);
+    });
+    clipboard.on('error', function(e) {
+        e.clearSelection();
+        $(".copyButton").addClass("bg-danger text-white")
+        e.trigger.textContent = '✗ Not Copied';
+        window.setTimeout(function() {
+            $(".copyButton").removeClass("bg-danger text-white")
+            e.trigger.textContent = 'Copy to Clipboard';
+        }, 2000);
+    });
+
+</script>
+
+<!-- Render the Description Markdown and link in the test failures -->
+
+<script>
+    const remarkable = new Remarkable();
+
+    const descriptions = document.querySelectorAll(".renderMarkdown");
+    descriptions.forEach(description => {
+        description.innerHTML = renderHtmlFromMarkdown(description.textContent);
+    });
+    function renderHtmlFromMarkdown(markdown) {
+        return remarkable.render(trim(markdown));
+    }
+    function trim(string) {
+        return string ? string.replace(/^ +| +$/gm, "") : string;
+    }
+</script>
+
+<!-- Show/Hide The Toggles When Scrolling The Page -->
+
+<script>
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("topOfRequestsScreen").style.display = "block";
+    document.getElementById("topOfFailuresScreen").style.display = "block";
+    document.getElementById("topOfSkippedScreen").style.display = "block";
+    document.getElementById("openAll").style.display = "none";
+    document.getElementById("openAllRequests").style.display = "none";
+
+
+  } else {
+    document.getElementById("topOfRequestsScreen").style.display = "none";
+    document.getElementById("topOfFailuresScreen").style.display = "none";
+    document.getElementById("topOfSkippedScreen").style.display = "none";
+    document.getElementById("openAll").style.display = "block";
+    document.getElementById("openAllRequests").style.display = "block";
+
+  }
+}
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
+
+<!-- Creates The Iteration Tabs -->
+
+<script type="text/javascript">
+    "use strict";
+
+window.onload = function () {
+
+  // set display for all blocks of response
+  var allItems = document.querySelectorAll('[class*=iteration-]');
+  allItems.forEach(function(elem){
+    elem.style.display = 'block';
+  });
+
+   
+  let totalIterations = 1;
+   
+
+  let menu = document.querySelector('#execution-menu .nav');
+
+  for(var i = 0; i < totalIterations; i++)
+  {
+    let li = document.createElement('li');
+    li.appendChild(document.createTextNode((i + 1)));
+    li.setAttribute('id', 'iteration-' + i);
+    li.classList.add("custom-tab");
+    li.classList.add("itPassed");
+
+    li.addEventListener('click', function() {
+      //set display to none for all except row
+      let allItems = document.querySelectorAll('[class*=iteration-]:not(.row)');
+      allItems.forEach(function(elem) {
+        elem.style.display = 'none';
+      })
+
+      let allMenus = document.querySelectorAll('[id*=iteration-]');
+      allMenus.forEach(function(elem){
+        elem.style.borderBottom = 'none';
+      })
+
+      this.style.borderBottom = 'solid 3px #032a33';
+
+      let items = document.querySelectorAll("." + this.id + ':not(.row)');
+      items.forEach(function(elem) {
+        elem.style.display = elem.style.display == 'block' ? 'none' : 'block';
+      })
+    });
+    menu.appendChild(li);
+  }
+
+  //shows first tab data
+  document.getElementById('iteration-0').click();
+  document.getElementById('iterationSelected').innerHTML = `Iteration ${document.getElementById('iteration-0').innerHTML} selected`
+
+}
+</script>
+
+<!-- Create the Selected Iteration Label -->
+
+<script>
+$(document).ready(function(){
+    $(function() {
+        $("#iterationList li").click(function() {
+            document.getElementById('iterationSelected').innerHTML = "Iteration " + this.innerHTML + " selected"
+        });
+    });
+});
+</script>
+
+<!-- Filter Action for the Iterations -->
+
+<script>
+$("#filterInput").on("input paste", function() {
+    var value = $(this).val();
+    $("#iterationList li").filter(function() {
+	    $("#showOnlyFailures").data("clickCount") ? $("#showOnlyFailures").click():null;
+        $(this).toggle($(this).text().indexOf(value) > -1)
+    });
+});
+</script>
+
+<!-- Showing the Failed Interations -->
+
+<script>
+$('#showOnlyFailures').on('click', function(e) {
+    let clickCount = $(this).data("clickCount") || 1
+	$("#filterInput").val()!="" && clickCount==1 ? $("#filterInput").val('').trigger('input'): null;
+    let selectedIteration = $('#iterationList li').filter(function () {
+        return $(this).css('border-bottom').indexOf("solid") > -1 && $(this).hasClass('itFailed');
+    });
+    selectedIteration.length || clickCount > 1 ? null : $("#iterationList li.itFailed")[0].click()
+    $("#iterationList li.itPassed").toggle()
+    $("div.bg-success [id*=requests]").parents('[class^="row iteration-"]').toggle();
+    clickCount = clickCount > 1 ? 1 : ++clickCount;
+    clickCount > 1 ? $("#showOnlyFailures").html("Show All Iterations") : $("#showOnlyFailures").html("Show Failed Iterations");
+    $(this).data("clickCount", clickCount)
+})
+</script>
+</body>
+</html>

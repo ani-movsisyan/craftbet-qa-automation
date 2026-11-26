@@ -1,0 +1,1148 @@
+{
+  "info": {
+    "_postman_id": "d51da19e-fd63-5d6f-b370-67e6a4d4fcc3",
+    "name": "CraftBet API - data retrieval",
+    "description": "Read-only requests to the CraftBet website API (`websitewebapi.craftbet.com`).\n\nThe platform exposes an RPC-style API: most read operations are `POST` requests whose body names the `Controller` and `Method` (e.g. `Document/GetBetsHistory`). Only `Get*` methods are used here - nothing creates, changes or deletes data.\n\nAuthentication: the website encrypts credentials client-side (RSA) before `LoginClient`, so the collection works with a session token instead. Put it into the `token` environment variable (see README) and run `00. Validate session` first.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Rolling 30-day period used by all history requests",
+          "const now = new Date();",
+          "const from = new Date(now.getTime() - 30 * 24 * 3600 * 1000);",
+          "pm.collectionVariables.set('createdFrom', from.toISOString().slice(0, 19));",
+          "pm.collectionVariables.set('createdBefore', new Date(now.getTime() + 24 * 3600 * 1000).toISOString().slice(0, 19));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// ---- common validations for every request ----",
+          "pm.test('HTTP status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Response time is below 5s', () => pm.expect(pm.response.responseTime).to.be.below(5000));",
+          "pm.test('Response is JSON', () => pm.response.to.be.json);",
+          "const body = pm.response.json();",
+          "pm.test('Platform ResponseCode is 0 (success)', () => {",
+          "    pm.expect(body.ResponseCode, `Description: ${body.Description}`).to.eql(0);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "createdFrom",
+      "value": ""
+    },
+    {
+      "key": "createdBefore",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Public data (no session)",
+      "description": "Catalogue data available to any visitor.",
+      "item": [
+        {
+          "name": "11. Game information - search (GetGames)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetGames",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetGames"
+              ]
+            },
+            "description": "Public catalogue search: games whose name matches `{{gamePattern}}`. Does not require a session.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PartnerId\": {{partnerId}},\n  \"TimeZone\": {{timeZone}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"Method\": \"GetGames\",\n  \"CategoryId\": null,\n  \"PageIndex\": 0,\n  \"PageSize\": 24,\n  \"ProviderIds\": [],\n  \"CategoryIds\": [\n    1,\n    0,\n    24,\n    21,\n    26,\n    12,\n    25,\n    13,\n    9,\n    6,\n    19,\n    8,\n    4,\n    16,\n    3,\n    2,\n    10,\n    22\n  ],\n  \"Pattern\": \"{{gamePattern}}\",\n  \"RequestData\": \"{\\\"Pattern\\\": \\\"{{gamePattern}}\\\", \\\"ProviderIds\\\": [], \\\"CategoryId\\\": null, \\\"PageIndex\\\": 0, \\\"PageSize\\\": 24, \\\"CategoryIds\\\": [1, 0, 24, 21, 26, 12, 25, 13, 9, 6, 19, 8, 4, 16, 3, 2, 10, 22]}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const games = pm.response.json().ResponseObject.Games;",
+                  "const pattern = pm.environment.get('gamePattern').toLowerCase();",
+                  "pm.test('Games are found', () => pm.expect(games).to.be.an('array').that.is.not.empty);",
+                  "pm.test('Page size is respected (<= 24)', () => pm.expect(games.length).to.be.at.most(24));",
+                  "pm.test('Every game name contains the search pattern', () => games.forEach(g => pm.expect(g.n.toLowerCase()).to.include(pattern)));",
+                  "pm.test('Every game has id, provider and image', () => games.forEach(g => {",
+                  "    pm.expect(g.p).to.be.a('number');",
+                  "    pm.expect(g.sp).to.be.a('string').and.not.empty;",
+                  "    pm.expect(g.i).to.be.a('string').and.not.empty;",
+                  "}));",
+                  "pm.environment.set('sampleGameId', games[0].p);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "12. Game providers (GetGameProviders)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetGameProviders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetGameProviders"
+              ]
+            },
+            "description": "Public list of game providers with the number of games for each.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const providers = pm.response.json().ResponseObject.Providers;",
+                  "pm.test('Providers list is not empty', () => pm.expect(providers).to.be.an('array').that.is.not.empty);",
+                  "pm.test('Providers have id, name and positive games count', () => providers.forEach(p => {",
+                  "    pm.expect(p.Id).to.be.a('number');",
+                  "    pm.expect(p.Name).to.be.a('string').and.not.empty;",
+                  "    pm.expect(p.GamesCount).to.be.a('number').and.at.least(0);",
+                  "}));",
+                  "pm.test('Provider ids are unique', () => pm.expect(new Set(providers.map(p => p.Id)).size).to.eql(providers.length));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "13. Latest winning bets - GET (getbets)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/getbets?timeZone={{timeZone}}&languageId={{languageId}}&winnersonly=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "getbets"
+              ],
+              "query": [
+                {
+                  "key": "timeZone",
+                  "value": "{{timeZone}}"
+                },
+                {
+                  "key": "languageId",
+                  "value": "{{languageId}}"
+                },
+                {
+                  "key": "winnersonly",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Public GET endpoint used by the home page 'Wins' widget. Shows that bet data is masked for other users."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const bets = pm.response.json().ResponseObject;",
+                  "pm.test('Bets list is returned', () => pm.expect(bets).to.be.an('array'));",
+                  "pm.test('Only winning bets are returned (winnersonly=true)', () => bets.forEach(b => pm.expect(b.WinAmount).to.be.above(0)));",
+                  "pm.test('Other users names are masked', () => bets.forEach(b => pm.expect(b.UserName).to.match(/^\\*+/)));",
+                  "pm.test('Each bet has product and currency', () => bets.forEach(b => {",
+                  "    pm.expect(b.ProductName).to.be.a('string');",
+                  "    pm.expect(b.CurrencyId).to.be.a('string');",
+                  "}));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "Validates the session token and fills clientId / currencyId.",
+      "item": [
+        {
+          "name": "00. Validate session (GetClientByToken)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetClientByToken",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetClientByToken"
+              ]
+            },
+            "description": "Validates the token copied from an authenticated browser session (or produced by `scripts/get_api_token.py`) and stores clientId / currencyId for the following requests.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"LanguageId\": \"{{languageId}}\",\n  \"Token\": \"{{token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const c = pm.response.json();",
+                  "pm.test('Session is valid - client Id returned', () => pm.expect(c.Id).to.be.a('number').and.above(0));",
+                  "pm.test('Client has a currency', () => pm.expect(c.CurrencyId).to.be.a('string').and.not.empty);",
+                  "pm.environment.set('clientId', c.Id);",
+                  "pm.environment.set('currencyId', c.CurrencyId);",
+                  "if (c.Token) { pm.environment.set('token', c.Token); }"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Client profile & status",
+      "description": "Customer profile, balance and account status.",
+      "item": [
+        {
+          "name": "01. Client information (GetClientInfo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetClientInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetClientInfo"
+              ]
+            },
+            "description": "Customer profile details: id, user name, e-mail, names, currency, verification flags.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const c = pm.response.json().ResponseObject || pm.response.json();",
+                  "pm.test('Profile belongs to the logged-in client', () => pm.expect(String(c.Id)).to.eql(String(pm.environment.get('clientId'))));",
+                  "pm.test('Profile has user name and currency', () => {",
+                  "    pm.expect(c).to.have.property('UserName');",
+                  "    pm.expect(c.CurrencyId).to.eql(pm.environment.get('currencyId'));",
+                  "});",
+                  "pm.test('Sensitive data is not exposed', () => pm.expect(c.Password == null || c.Password === '').to.be.true);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "02. Account balance (GetClientBalance)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetClientBalance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetClientBalance"
+              ]
+            },
+            "description": "Current balance of the client in the account currency (real + bonus balances).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PartnerId\": {{partnerId}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"CurrencyId\\\": \\\"{{currencyId}}\\\"}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const b = pm.response.json();",
+                  "pm.test('Balance currency matches client currency', () => pm.expect(b.CurrencyId).to.eql(pm.environment.get('currencyId')));",
+                  "pm.test('AvailableBalance is a non-negative number', () => pm.expect(b.AvailableBalance).to.be.a('number').and.at.least(0));",
+                  "pm.test('Balances is an array of typed balances', () => {",
+                  "    pm.expect(b.Balances).to.be.an('array');",
+                  "    b.Balances.forEach(x => pm.expect(x).to.have.property('Balance'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "03. Account status (GetClientStates)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Account state flags of the client (unread messages, verification / limitation states).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Client\",\n  \"Method\": \"GetClientStates\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const ro = pm.response.json().ResponseObject;",
+                  "pm.test('States object is returned', () => pm.expect(ro).to.not.be.undefined);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "04. Client accounts (GetClientAccounts)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Wallet accounts of the client (real / bonus) with balances - complements Account Status.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Client\",\n  \"Method\": \"GetClientAccounts\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"ClientId\\\":{{clientId}}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const ro = pm.response.json().ResponseObject;",
+                  "pm.test('Accounts list is present', () => pm.expect(ro.Accounts).to.be.an('array').that.is.not.empty);",
+                  "pm.test('Every account has currency and numeric balance', () => {",
+                  "    ro.Accounts.forEach(a => {",
+                  "        pm.expect(a.CurrencyId).to.be.a('string');",
+                  "        pm.expect(a.Balance).to.be.a('number');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments & transactions",
+      "description": "Deposits, withdrawals, transaction history, payment methods.",
+      "item": [
+        {
+          "name": "05. Deposit information (GetPaymentRequests Type=2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Deposit requests of the client for the last 30 days. Type 2 = deposit.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Document\",\n  \"Method\": \"GetPaymentRequests\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"ClientId\\\":{{clientId}},\\\"TimeZone\\\":{{timeZone}},\\\"CurrencyId\\\":\\\"{{currencyId}}\\\",\\\"CreatedFrom\\\":\\\"{{createdFrom}}\\\",\\\"CreatedBefore\\\":\\\"{{createdBefore}}\\\",\\\"SkipCount\\\":0,\\\"TakeCount\\\":20,\\\"Statuses\\\":null,\\\"Type\\\":2}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const ro = json.ResponseObject;",
+                  "// The API wraps lists differently per method - accept the known shapes",
+                  "const list = Array.isArray(ro) ? ro",
+                  "    : (ro && (ro.PaymentRequests || ro.Transactions || ro.Bets || ro.Entities || ro.Bonuses || ro.Documents)) || [];",
+                  "",
+                  "pm.test('ResponseObject is returned', () => pm.expect(ro).to.not.be.undefined);",
+                  "pm.test('All items are deposits of this client', () => {",
+                  "    list.forEach(p => {",
+                  "        if (p.Type !== undefined) pm.expect(p.Type).to.eql(2);",
+                  "        if (p.ClientId !== undefined) pm.expect(String(p.ClientId)).to.eql(String(pm.environment.get('clientId')));",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "06. Withdrawal information (GetPaymentRequests Type=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Withdrawal requests of the client for the last 30 days. Type 1 = withdrawal.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Document\",\n  \"Method\": \"GetPaymentRequests\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"ClientId\\\":{{clientId}},\\\"TimeZone\\\":{{timeZone}},\\\"CurrencyId\\\":\\\"{{currencyId}}\\\",\\\"CreatedFrom\\\":\\\"{{createdFrom}}\\\",\\\"CreatedBefore\\\":\\\"{{createdBefore}}\\\",\\\"SkipCount\\\":0,\\\"TakeCount\\\":20,\\\"Statuses\\\":null,\\\"Type\\\":1}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const ro = json.ResponseObject;",
+                  "// The API wraps lists differently per method - accept the known shapes",
+                  "const list = Array.isArray(ro) ? ro",
+                  "    : (ro && (ro.PaymentRequests || ro.Transactions || ro.Bets || ro.Entities || ro.Bonuses || ro.Documents)) || [];",
+                  "",
+                  "pm.test('ResponseObject is returned', () => pm.expect(ro).to.not.be.undefined);",
+                  "pm.test('All items are withdrawals', () => list.forEach(p => { if (p.Type !== undefined) pm.expect(p.Type).to.eql(1); }));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "07. Transaction history (GetTransactionHistory)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "All balance operations (bets, wins, deposits, bonuses) of the last 30 days, first page of 20.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Document\",\n  \"Method\": \"GetTransactionHistory\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"ClientId\\\":{{clientId}},\\\"TimeZone\\\":{{timeZone}},\\\"CurrencyId\\\":\\\"{{currencyId}}\\\",\\\"CreatedFrom\\\":\\\"{{createdFrom}}\\\",\\\"CreatedBefore\\\":\\\"{{createdBefore}}\\\",\\\"SkipCount\\\":0,\\\"TakeCount\\\":20}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const ro = json.ResponseObject;",
+                  "// The API wraps lists differently per method - accept the known shapes",
+                  "const list = Array.isArray(ro) ? ro",
+                  "    : (ro && (ro.PaymentRequests || ro.Transactions || ro.Bets || ro.Entities || ro.Bonuses || ro.Documents)) || [];",
+                  "",
+                  "pm.test('ResponseObject is returned', () => pm.expect(ro).to.not.be.undefined);",
+                  "pm.test('Page size is respected (<= 20)', () => pm.expect(list.length).to.be.at.most(20));",
+                  "pm.test('Transactions have amount and date', () => list.forEach(t => {",
+                  "    pm.expect(t).to.have.property('Amount');",
+                  "    pm.expect(t).to.satisfy(x => 'CreationTime' in x || 'CreationDate' in x || 'Date' in x);",
+                  "}));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "08. Payment methods (GetPartnerPaymentSystems)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/GetPartnerPaymentSystems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "GetPartnerPaymentSystems"
+              ]
+            },
+            "description": "Payment systems available to the client for deposits.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"Type\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.test('PartnerPaymentSystems list is returned', () => pm.expect(r.PartnerPaymentSystems).to.be.an('array'));",
+                  "pm.test('Each payment method has an id and a name', () => r.PartnerPaymentSystems.forEach(p => {",
+                  "    pm.expect(p).to.have.property('Id');",
+                  "    pm.expect(p).to.satisfy(x => 'Name' in x || 'PaymentSystemName' in x);",
+                  "}));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bonuses & betting",
+      "description": "Bonuses and betting history.",
+      "item": [
+        {
+          "name": "09. Bonus information (GetBonuses)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Bonuses available / assigned to the client.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Document\",\n  \"Method\": \"GetBonuses\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"PlatformId\\\":2,\\\"ProductId\\\":1}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const ro = json.ResponseObject;",
+                  "// The API wraps lists differently per method - accept the known shapes",
+                  "const list = Array.isArray(ro) ? ro",
+                  "    : (ro && (ro.PaymentRequests || ro.Transactions || ro.Bets || ro.Entities || ro.Bonuses || ro.Documents)) || [];",
+                  "",
+                  "pm.test('Bonuses are returned as a list', () => pm.expect(list).to.be.an('array'));",
+                  "pm.test('Bonus items have id and status', () => list.forEach(b => {",
+                  "    pm.expect(b).to.satisfy(x => 'Id' in x || 'BonusId' in x);",
+                  "}));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "10. Betting history (GetBetsHistory)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{siteUrl}}"
+              },
+              {
+                "key": "Referer",
+                "value": "{{siteUrl}}/"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{partnerId}}/api/Main/ApiRequest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{partnerId}}",
+                "api",
+                "Main",
+                "ApiRequest"
+              ]
+            },
+            "description": "Customer betting activity for the last 30 days (casino + sport), first page of 20.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Controller\": \"Document\",\n  \"Method\": \"GetBetsHistory\",\n  \"PartnerId\": {{partnerId}},\n  \"LanguageId\": \"{{languageId}}\",\n  \"TimeZone\": {{timeZone}},\n  \"Token\": \"{{token}}\",\n  \"ClientId\": {{clientId}},\n  \"RequestData\": \"{\\\"ClientId\\\":{{clientId}},\\\"TimeZone\\\":{{timeZone}},\\\"CurrencyId\\\":\\\"{{currencyId}}\\\",\\\"CreatedFrom\\\":\\\"{{createdFrom}}\\\",\\\"CreatedBefore\\\":\\\"{{createdBefore}}\\\",\\\"SkipCount\\\":0,\\\"TakeCount\\\":20}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Client data requires an authenticated session token (see README: Postman / How to get a token)",
+                  "if (!pm.environment.get('token') || !pm.environment.get('clientId')) {",
+                  "    console.warn('token / clientId are empty - request skipped');",
+                  "    pm.execution.skipRequest();",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const ro = json.ResponseObject;",
+                  "// The API wraps lists differently per method - accept the known shapes",
+                  "const list = Array.isArray(ro) ? ro",
+                  "    : (ro && (ro.PaymentRequests || ro.Transactions || ro.Bets || ro.Entities || ro.Bonuses || ro.Documents)) || [];",
+                  "",
+                  "pm.test('Bets list and total count are returned', () => {",
+                  "    pm.expect(ro.Bets).to.be.an('array');",
+                  "    pm.expect(ro.Count).to.be.a('number').and.at.least(ro.Bets.length);",
+                  "});",
+                  "pm.test('Each bet has amount, state and product', () => ro.Bets.forEach(b => {",
+                  "    pm.expect(b.BetAmount).to.be.a('number');",
+                  "    pm.expect(b).to.have.property('State');",
+                  "    pm.expect(b).to.have.property('ProductName');",
+                  "}));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}

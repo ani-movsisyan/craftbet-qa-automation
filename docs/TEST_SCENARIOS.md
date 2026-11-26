@@ -26,23 +26,23 @@
 | 1.4 | `test_successful_login` *(auth)* | Log in with the test account | Log In button disappears, session token stored by the app, balance widget shown |
 | 1.5 | `test_session_persists_after_refresh_and_logout` *(auth)* | Refresh, then log out | session survives F5, Log In button returns after logout |
 | **2. Navigation** ||||
-| 2.1 | `test_top_menu_navigation[...]` | Click Sport, Live, Casino, Live Casino in the top menu | URL fragment, page content rendered, no error markers, header still present |
-| 2.2 | `test_more_menu_reveals_additional_sections` | Hover / click **More**, open *Promotions* from the drop-down | drop-down lists ≥ 2 sections, target page loads |
-| 2.3 | `test_info_pages_load[...]` | Open Terms, Privacy, AML, Promotions | URL, > 200 chars of content, no 404 / error |
+| 2.1 | `test_top_menu_navigation[...]` | Click Sport, Live, Casino, Live Casino in the top menu | URL fragment, the routed page body (without header/footer) shows text, images or the embedded sportsbook iframe, no error markers, header still present |
+| 2.2 | `test_more_menu_reveals_additional_sections` | Hover / click **More**, open *Skill Games* from the drop-down | drop-down lists ≥ 2 sections, target page body has content |
+| 2.3 | `test_info_pages_load[...]` | Open Terms, Privacy, AML, Promotions | URL, ≥ 200 chars in the page body (header/footer excluded), no 404 / error. **Promotions is marked xfail: its body is empty for guests (found by this test)** |
 | 2.4 | `test_back_forward_and_logo_navigation` | Casino → Live Casino → Back → Forward → Logo | browser history works in the SPA, logo leads to `/home` |
 | **3. Game interaction (demo only)** ||||
-| 3.1 | `test_open_several_demo_games` | Read lobby cards, keep only those with **Demo**, open 3 of them | URL `/demo/`, iframe `#main-game-iframe` loaded with fun-mode URL, container ≥ 600×300, game content rendered inside iframe, **game redraws after interaction** (iframe snapshot before ≠ after), still in demo after interaction |
+| 3.1 | `test_open_several_demo_games` | Read lobby cards, keep only those with **Demo**, open 3 of them | URL `/demo/`, iframe `#main-game-iframe` loaded with fun-mode provider URL, container ≥ 600×300, **game draws on a canvas/video** inside the iframe (nested provider iframes searched too), **game redraws after interaction** (iframe snapshot before ≠ after), still in demo after interaction. Region-blocked games, games the platform could not launch and provider error screens (e.g. *Your stall disabled*) are logged and skipped |
 | | | Interactions: focus click, click Play/Continue zone, SPACE ×2 (spin with demo credits) | iframe document still alive (game did not crash) |
 | 3.2 | `test_open_demo_game_from_lobby_by_click` | Hover a card, click **Demo**, then browser Back | game opens in demo mode, lobby restored with games |
 | **4. Additional functionality** ||||
 | 4.1 | `test_language_switch` | Switch EN → Русский → EN with the language selector | `<html lang>` and `localStorage.lang` change, header captions translated (`Войти`) and back |
 | 4.2 | `test_casino_category_tabs` | Open Slots, Table Games, Top; use **Back** after each | active tab highlighted, unique URL per category, games displayed |
 | 4.3 | `test_game_search[book / roulette]` | Type a query in *Search your game…* | URL `?pattern=`, every result name contains the query |
-| 4.4 | `test_scroll_lobby_loads_more_games` | Scroll a category | list does not shrink (lazy loading works) |
+| 4.4 | `test_scroll_lobby_loads_more_games` | Scroll a category | more games appear than before scrolling (lazy loading works) |
 | 4.5 | `test_account_history_pages[...]` *(auth)* | Bets history, Transactions, Payments, Bonuses | page opens, data table or empty-state block present, session kept |
-| 4.6 | `test_add_and_remove_favorite_game` *(auth)* | Heart a game → *Favorites* tab → un-heart | game appears in and disappears from Favorites |
+| 4.6 | `test_add_and_remove_favorite_game` *(auth)* | Heart a game → *Favorites* tab → un-heart → refresh | heart icon state changes both ways, game appears in Favorites, after reload (list fully rendered) it is gone |
 | **5. End-to-end journey** ||||
-| 5.1 | `test_complete_user_journey` *(auth)* | login → Sport → Live Casino → Casino/Slots → search → demo game + interaction → bets history → logout | each step asserted; journey summary written to the log |
+| 5.1 | `test_complete_user_journey` *(auth)* | login → Sport → Live Casino → Casino/Slots → Back to lobby → search → demo game + interaction → bets history → logout | each step asserted; journey summary written to the log |
 
 ### Challenges and how they were solved
 

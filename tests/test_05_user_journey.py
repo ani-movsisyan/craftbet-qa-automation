@@ -30,6 +30,7 @@ def test_complete_user_journey(logged_in_driver):
     casino = CasinoPage(driver).open()
     casino.select_category("Slots")
     steps.append("select Slots")
+    casino.go_back_to_lobby()  # the category view hides the tab bar and the search field
     results = casino.search("book")
     assert results
     steps.append(f"search 'book' -> {len(results)} games")

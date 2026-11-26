@@ -18,11 +18,15 @@ log = get_logger("conftest")
 @pytest.fixture
 def driver(request):
     drv = create_driver()
-    # Open the site once and fix the UI language, so locators based on English captions are stable.
-    page = BasePage(drv).open("/home")
-    drv.execute_script("window.localStorage.setItem('lang', arguments[0]);", settings.UI_LANGUAGE)
-    drv.refresh()
-    page.wait_for_page_ready()
+    try:
+        # Open the site once and fix the UI language, so locators based on English captions are stable.
+        page = BasePage(drv).open("/home")
+        drv.execute_script("window.localStorage.setItem('lang', arguments[0]);", settings.UI_LANGUAGE)
+        drv.refresh()
+        page.wait_for_page_ready()
+    except Exception:
+        drv.quit()  # do not leave the browser running when setup fails
+        raise
     log.info("===== START %s =====", request.node.name)
     yield drv
     log.info("===== END %s =====", request.node.name)

@@ -59,8 +59,8 @@ def test_scroll_lobby_loads_more_games(driver):
     for _ in range(4):
         casino.scroll_by(2500)
         casino.wait_for_page_ready()
-    after = casino.wait_for_games(minimum=before)
-    assert after >= before, "Game list must not shrink while scrolling"
+    after = casino.wait_for_games(minimum=before + 1)  # times out if lazy loading adds nothing
+    assert after > before, f"Scrolling must load more games (before={before}, after={after})"
     casino.screenshot("lobby_scrolled")
 
 
@@ -80,12 +80,15 @@ def test_add_and_remove_favorite_game(logged_in_driver):
     casino = CasinoPage(logged_in_driver).open()
     game = casino.demo_games(limit=1)[0]
 
+    assert not casino.is_favorite(game.name), f"'{game.name}' is already a favorite - pick a clean account state"
     casino.toggle_favorite(game.name)
+    casino.wait_favorite_state(game.name, True)
     casino.select_category("Favorites")
     assert casino.is_game_in_list(game.name), f"'{game.name}' was not added to Favorites"
     casino.screenshot("favorites_added")
 
     casino.toggle_favorite(game.name)
+    casino.wait_favorite_state(game.name, False)  # heart icon switched back
     logged_in_driver.refresh()
-    casino.wait_for_page_ready()
+    casino.wait_for_list_loaded()  # cards or empty-state rendered, not the loading gap
     assert not casino.is_game_in_list(game.name, timeout=5), f"'{game.name}' was not removed from Favorites"

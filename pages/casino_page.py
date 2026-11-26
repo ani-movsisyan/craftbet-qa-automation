@@ -113,17 +113,36 @@ class CasinoPage(BasePage):
         return demo[:limit]
 
     def open_demo_by_name(self, name: str):
-        card = self.driver.find_element(
-            By.XPATH, f"//*[contains(@class,'casino-game')][.//*[contains(@class,'hidden-game-name')][normalize-space()='{name}']]"
-        )
+        card = self._card(name)
         self.hover(card)
         demo = card.find_element(*self.DEMO_BUTTON)
         self.click(demo)
 
-    def toggle_favorite(self, name: str) -> WebElement:
-        card = self.driver.find_element(
+    def _card(self, name: str) -> WebElement:
+        return self.driver.find_element(
             By.XPATH, f"//*[contains(@class,'casino-game')][.//*[contains(@class,'hidden-game-name')][normalize-space()='{name}']]"
         )
+
+    def is_favorite(self, name: str) -> bool:
+        """Heart icon state: Font Awesome renders an outlined heart ('far') or a filled one ('fas')."""
+        icon = self._card(name).find_element(*self.FAVORITE_ICON)
+        svg = icon.find_elements(By.CSS_SELECTOR, "svg")
+        prefix = svg[0].get_attribute("data-prefix") if svg else ""
+        classes = icon.get_attribute("class") or ""
+        return prefix == "fas" or "active" in classes or "selected" in classes
+
+    def wait_favorite_state(self, name: str, expected: bool, timeout: int = 10):
+        WebDriverWait(self.driver, timeout).until(lambda d: self.is_favorite(name) == expected)
+
+    def wait_for_list_loaded(self, timeout: int = 20):
+        """Wait until the game list has rendered: cards, or an empty-state message - not the loading gap."""
+        self.wait_for_page_ready()
+        WebDriverWait(self.driver, timeout).until(lambda d: self.read_cards() or d.execute_script("""
+            const s = document.querySelector('.router_section');
+            return !!s && /no (games|favorites|results)|empty|nothing/i.test(s.innerText || '');"""))
+
+    def toggle_favorite(self, name: str) -> WebElement:
+        card = self._card(name)
         self.hover(card)
         icon = card.find_element(*self.FAVORITE_ICON)
         self.driver.execute_script("arguments[0].click();", icon)

@@ -75,7 +75,8 @@ def item(name, description, method, path, body=None, tests="", query=None, auth=
         request["body"] = {"mode": "raw", "raw": render(body), "options": {"raw": {"language": "json"}}}
     events = [{"listen": "test", "script": {"type": "text/javascript", "exec": script(tests)}}]
     if auth:
-        events.insert(0, {"listen": "prerequest", "script": {"type": "text/javascript", "exec": script(REQUIRE_TOKEN)}})
+        guard = REQUIRE_TOKEN_ONLY if auth == "token" else REQUIRE_TOKEN
+        events.insert(0, {"listen": "prerequest", "script": {"type": "text/javascript", "exec": script(guard)}})
     return {"name": name, "request": request, "event": events, "response": []}
 
 
@@ -107,6 +108,14 @@ if (!pm.environment.get('token') || !pm.environment.get('clientId')) {
 }
 """
 
+REQUIRE_TOKEN_ONLY = r"""
+// Session validation needs only the token - it is the request that fills clientId / currencyId
+if (!pm.environment.get('token')) {
+    console.warn('token is empty - request skipped');
+    pm.execution.skipRequest();
+}
+"""
+
 LIST_HELPER = r"""
 const json = pm.response.json();
 const ro = json.ResponseObject;
@@ -131,6 +140,7 @@ pm.environment.set('clientId', c.Id);
 pm.environment.set('currencyId', c.CurrencyId);
 if (c.Token) { pm.environment.set('token', c.Token); }
 """,
+        auth="token",
     ),
 ]
 

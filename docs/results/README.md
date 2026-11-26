@@ -4,7 +4,10 @@
 
 `pytest -m "not negative"` without test-account credentials:
 
-**19 passed, 8 skipped** (skipped = tests marked `auth`, they need the test account from `.env`), duration 4 min 36 s.
+**18 passed, 1 xfailed, 8 skipped**, duration 5 min 9 s.
+
+* skipped = tests marked `auth`, they need the test account from `.env`
+* xfailed = known issue found by the suite: `/promotions` renders an empty page body for guest users
 
 * [ui_report_guest.html](ui_report_guest.html) – pytest-html report, a screenshot attached to every test (download and open in a browser)
 * [ui_run_guest.log](ui_run_guest.log) – step log

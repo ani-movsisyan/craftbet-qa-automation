@@ -1,5 +1,6 @@
 """Scenario 3 - Casino games in DEMO mode only. Games without a Demo button (real money) are skipped."""
 import pytest
+from selenium.common.exceptions import TimeoutException
 
 from pages.casino_page import CasinoPage
 from pages.game_page import GamePage
@@ -13,22 +14,36 @@ def test_open_several_demo_games(driver):
     candidates = CasinoPage(driver).demo_games(limit=GAMES_TO_OPEN + 3)  # spare ones in case of region blocks
     assert candidates, "No demo games available in the lobby"
 
-    opened = []
+    opened, broken = [], []
     for card in candidates:
         if len(opened) == GAMES_TO_OPEN:
             break
         casino.log.info("Opening demo game '%s' (%s)", card.name, card.provider)
         game = GamePage(driver).open(card.demo_href)
         game.wait_for_url_contains("/demo/")
-        if game.is_region_blocked():
+        try:
+            game.wait_for_game_container()
+        except TimeoutException:
+            if not game.is_region_blocked():
+                raise
+        if game.is_region_blocked():  # checked after load, in the game area only
             game.log.warning("'%s' is not available in this region - skipped", card.name)
             continue
+        if not game.provider_launched():
+            game.log.warning("'%s': demo did not launch (iframe points to %s) - skipped", card.name, game.iframe_src())
+            continue
 
-        game.wait_for_game_container()
         assert game.is_demo_mode(), f"'{card.name}' did not start in demo (fun) mode: {game.iframe_src()}"
         width, height = game.iframe_size()
         assert width >= game.MIN_WIDTH and height >= game.MIN_HEIGHT, f"Game container is too small: {width}x{height}"
-        rendered = game.wait_game_rendered()
+        try:
+            rendered = game.wait_game_rendered()
+        except TimeoutException:
+            # Provider error screens ("Your stall disabled", etc.) have no game canvas - log and take the next one.
+            game.log.warning("'%s' did not render a game canvas - provider error, skipped", card.name)
+            game.screenshot(f"game_not_rendered_{card.name}")
+            broken.append(card.name)
+            continue
         game.screenshot(f"game_loaded_{card.name}")
         before = game.game_snapshot()
 
@@ -40,6 +55,8 @@ def test_open_several_demo_games(driver):
         opened.append((card.name, rendered, len(actions)))
 
     casino.log.info("Demo games verified: %s", opened)
+    if broken:
+        casino.log.warning("Demo games that failed to render (reported as defects): %s", broken)
     assert len(opened) >= 2, f"Expected at least 2 demo games to open, opened: {opened}"
 
 

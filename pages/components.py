@@ -69,6 +69,16 @@ class Header(BasePage):
         modal.find_visible(LoginModal.USERNAME)
         return modal
 
+    def is_balance_visible(self, timeout: int = 10) -> bool:
+        """Any visible balance element - the first DOM match may be a hidden (mobile) duplicate."""
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                lambda d: any(self._displayed(e) for e in d.find_elements(*self.BALANCE))
+            )
+            return True
+        except TimeoutException:
+            return False
+
     def is_login_button_visible(self, timeout: int = 3) -> bool:
         return self.is_visible(self.LOGIN_BUTTON, timeout)
 

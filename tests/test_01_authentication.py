@@ -49,7 +49,7 @@ def test_successful_login(logged_in_driver):
     header = Header(logged_in_driver)
     assert not header.is_login_button_visible(timeout=2), "Log In button must disappear after login"
     assert header.has_session_in_storage(), "Session token must be stored by the application"
-    assert header.is_visible(Header.BALANCE, timeout=10), "Balance widget must be shown for a logged-in client"
+    assert header.is_balance_visible(timeout=10), "Balance widget must be shown for a logged-in client"
     header.screenshot("logged_in_home")
 
 

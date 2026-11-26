@@ -10,12 +10,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from pages.base_page import BasePage
 
-REGION_BLOCK_TEXTS = ("not available in your region", "restricted", "not allowed in your country")
+REGION_BLOCK_TEXTS = ("not available in your region", "not available in your country")
+
+# A game is rendered when the provider draws on a reasonably sized canvas (or plays a video).
+_FIND_RENDER_SURFACE_JS = """
+    const s = [...document.querySelectorAll('canvas, video')]
+        .find(e => { const r = e.getBoundingClientRect(); return r.width >= 200 && r.height >= 150; });
+    return s ? s.tagName.toLowerCase() : null;"""
 
 
 class GamePage(BasePage):
     GAME_IFRAME = (By.CSS_SELECTOR, "iframe#main-game-iframe")
-    CANVAS_OR_CONTENT = (By.CSS_SELECTOR, "canvas, video, iframe, #game, [id*='game' i], [class*='game' i]")
     MIN_WIDTH, MIN_HEIGHT = 600, 300
 
     def wait_for_game_container(self, timeout: int = 40):
@@ -37,23 +42,63 @@ class GamePage(BasePage):
         size = self.find(self.GAME_IFRAME).size
         return size["width"], size["height"]
 
+    def provider_launched(self) -> bool:
+        """False when the platform could not start the game and pointed the iframe back to the site itself."""
+        from config import settings
+        return not self.iframe_src().rstrip("/").startswith(settings.BASE_URL)
+
     def is_demo_mode(self) -> bool:
         src = self.iframe_src().lower()
         return "/demo/" in self.current_url and ("mode=fun" in src or "demo" in src or "fun" in src)
 
     def is_region_blocked(self) -> bool:
-        text = self.page_text().lower()
+        """Look for the region-block message in the game area only (game page body and the game iframe)."""
+        # Only the game container: the page below the game lists other cards that may say "Not Available...".
+        texts = [self.driver.execute_script(
+            "const c = document.querySelector('.game-content'); return c ? c.innerText : '';")]
+        frames = self.driver.find_elements(*self.GAME_IFRAME)
+        if frames:
+            try:
+                self.driver.switch_to.frame(frames[0])
+                texts.append(self.driver.execute_script("return document.body ? document.body.innerText : '';"))
+            except WebDriverException:
+                pass
+            finally:
+                self.driver.switch_to.default_content()
+        text = " ".join(t or "" for t in texts).lower()
         return any(t in text for t in REGION_BLOCK_TEXTS)
 
+    def _render_surface(self, depth: int = 0) -> str | None:
+        """Search the current frame for a canvas/video; providers like Pragmatic Play nest one more iframe."""
+        tag = self.driver.execute_script(_FIND_RENDER_SURFACE_JS)
+        if tag or depth >= 2:
+            return tag
+        for index in range(len(self.driver.find_elements(By.TAG_NAME, "iframe"))):
+            switched = False
+            try:
+                self.driver.switch_to.frame(self.driver.find_elements(By.TAG_NAME, "iframe")[index])
+                switched = True
+                tag = self._render_surface(depth + 1)
+            except (WebDriverException, IndexError):
+                tag = None
+            finally:
+                if switched:
+                    self.driver.switch_to.parent_frame()
+            if tag:
+                return f"iframe>{tag}"
+        return None
+
     def wait_game_rendered(self, timeout: int = 45, settle: int = 6) -> str:
-        """Switch into the game iframe, wait for rendered content (canvas / video / DOM), then let the
-        provider's loading screen finish. Returns the tag that was found."""
-        self.driver.switch_to.frame(self.find(self.GAME_IFRAME))
-        try:
-            element = WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(self.CANVAS_OR_CONTENT))
-            tag = element.tag_name
-        finally:
-            self.driver.switch_to.default_content()
+        """Wait until the game draws on a canvas / video inside the game iframe (also inside a nested
+        provider iframe), then let the provider's loading screen finish. Returns where it was found."""
+        def surface(_):
+            try:
+                self.driver.switch_to.frame(self.find(self.GAME_IFRAME))
+                return self._render_surface()
+            finally:
+                self.driver.switch_to.default_content()
+
+        tag = WebDriverWait(self.driver, timeout, ignored_exceptions=(WebDriverException,)).until(surface)
         time.sleep(settle)  # providers show their own loading bar after the canvas appears
         return tag
 

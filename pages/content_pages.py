@@ -11,14 +11,34 @@ ERROR_MARKERS = ("404", "page not found", "something went wrong", "server error"
 class ContentPage(BasePage):
     """Any page whose correctness we validate by URL, rendered content and absence of error markers."""
     IFRAME = (By.TAG_NAME, "iframe")
+    # The routed page component (everything except the header and footer).
+    MAIN_CONTENT_JS = """
+        const comps = [...document.querySelectorAll('.router_section > :not(router-outlet)')];
+        const vis = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+        return {
+            text: comps.map(c => (c.innerText || '').trim()).join('\\n'),
+            height: Math.max(0, ...comps.map(c => c.getBoundingClientRect().height)),
+            images: comps.reduce((n, c) => n + [...c.querySelectorAll('img')].filter(vis).length, 0),
+            iframes: comps.reduce((n, c) => n + [...c.querySelectorAll('iframe')]
+                                 .filter(f => f.getBoundingClientRect().height > 200).length, 0),
+        };"""
+
+    def main_content(self) -> dict:
+        return self.driver.execute_script(self.MAIN_CONTENT_JS)
 
     def wait_for_content(self, min_chars: int = 50, timeout: int = 30) -> str:
-        WebDriverWait(self.driver, timeout).until(lambda d: len(self.page_text().strip()) >= min_chars)
-        return self.page_text()
+        """Wait until the routed page component (not header/footer) shows real content:
+        enough text, or visible images (e.g. Live Casino lobby) or an embedded app iframe (e.g. Sport)."""
+        def ready(_):
+            c = self.main_content()
+            return c["height"] >= 150 and (len(c["text"]) >= min_chars or c["images"] > 0 or c["iframes"] > 0)
+
+        WebDriverWait(self.driver, timeout).until(ready)
+        return self.main_content()["text"]
 
     def has_error_markers(self) -> bool:
-        main_text = self.page_text().lower()
-        return any(m in main_text.split("\n")[:40] for m in ERROR_MARKERS) or "404" in self.driver.title
+        lines = self.page_text().lower().split("\n")[:40]
+        return any(m in line for line in lines for m in ERROR_MARKERS) or "404" in self.driver.title
 
     def has_visible_iframe(self, timeout: int = 20) -> bool:
         try:

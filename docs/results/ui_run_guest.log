@@ -1,0 +1,159 @@
+2026-11-26 20:56:12,635 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:12,635 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:56:17,418 [INFO] craftbet.conftest: ===== START test_website_opens =====
+2026-11-26 20:56:17,928 [INFO] craftbet.HomePage: Screenshot saved: 205617_home_page_guest.png
+2026-11-26 20:56:18,372 [INFO] craftbet.BasePage: Screenshot saved: 205617_PASSED_test_website_opens.png
+2026-11-26 20:56:18,395 [INFO] craftbet.conftest: ===== END test_website_opens =====
+2026-11-26 20:56:21,903 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:21,905 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:56:24,544 [INFO] craftbet.conftest: ===== START test_login_form_opens_and_validates_empty_fields =====
+2026-11-26 20:56:26,094 [INFO] craftbet.LoginModal: Screenshot saved: 205625_login_form_empty.png
+2026-11-26 20:56:26,355 [INFO] craftbet.BasePage: Screenshot saved: 205626_PASSED_test_login_form_opens_and_validates_empty_fields.png
+2026-11-26 20:56:26,369 [INFO] craftbet.conftest: ===== END test_login_form_opens_and_validates_empty_fields =====
+2026-11-26 20:56:29,910 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:29,912 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:56:33,331 [INFO] craftbet.conftest: ===== START test_top_menu_navigation[Sport (pre-match)] =====
+2026-11-26 20:56:33,332 [INFO] craftbet.Header: Click top menu item 'sport/prematch#/prematch'
+2026-11-26 20:56:35,246 [INFO] craftbet.ContentPage: Screenshot saved: 205635_menu_Sport_pre-match_.png
+2026-11-26 20:56:35,246 [INFO] craftbet.Header: 'Sport (pre-match)' opened: https://craftbet.com/sport/prematch#/prematch
+2026-11-26 20:56:35,335 [INFO] craftbet.BasePage: Screenshot saved: 205635_PASSED_test_top_menu_navigation_Sport_pre-match_.png
+2026-11-26 20:56:35,345 [INFO] craftbet.conftest: ===== END test_top_menu_navigation[Sport (pre-match)] =====
+2026-11-26 20:56:39,103 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:39,103 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:56:43,624 [INFO] craftbet.conftest: ===== START test_top_menu_navigation[Live betting] =====
+2026-11-26 20:56:43,626 [INFO] craftbet.Header: Click top menu item 'sport/live#/live'
+2026-11-26 20:56:44,635 [INFO] craftbet.ContentPage: Screenshot saved: 205644_menu_Live_betting.png
+2026-11-26 20:56:44,636 [INFO] craftbet.Header: 'Live betting' opened: https://craftbet.com/sport/live#/live
+2026-11-26 20:56:44,731 [INFO] craftbet.BasePage: Screenshot saved: 205644_PASSED_test_top_menu_navigation_Live_betting_.png
+2026-11-26 20:56:44,749 [INFO] craftbet.conftest: ===== END test_top_menu_navigation[Live betting] =====
+2026-11-26 20:56:48,893 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:48,894 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:56:53,626 [INFO] craftbet.conftest: ===== START test_top_menu_navigation[Casino] =====
+2026-11-26 20:56:53,628 [INFO] craftbet.Header: Click top menu item 'group/7'
+2026-11-26 20:56:55,221 [INFO] craftbet.ContentPage: Screenshot saved: 205654_menu_Casino.png
+2026-11-26 20:56:55,221 [INFO] craftbet.Header: 'Casino' opened: https://craftbet.com/group/7
+2026-11-26 20:56:55,537 [INFO] craftbet.BasePage: Screenshot saved: 205655_PASSED_test_top_menu_navigation_Casino_.png
+2026-11-26 20:56:55,558 [INFO] craftbet.conftest: ===== END test_top_menu_navigation[Casino] =====
+2026-11-26 20:56:59,236 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:56:59,236 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:02,814 [INFO] craftbet.conftest: ===== START test_top_menu_navigation[Live Casino] =====
+2026-11-26 20:57:02,815 [INFO] craftbet.Header: Click top menu item 'products/5'
+2026-11-26 20:57:04,726 [INFO] craftbet.ContentPage: Screenshot saved: 205704_menu_Live_Casino.png
+2026-11-26 20:57:04,726 [INFO] craftbet.Header: 'Live Casino' opened: https://craftbet.com/products/5
+2026-11-26 20:57:04,951 [INFO] craftbet.BasePage: Screenshot saved: 205704_PASSED_test_top_menu_navigation_Live_Casino_.png
+2026-11-26 20:57:05,097 [INFO] craftbet.conftest: ===== END test_top_menu_navigation[Live Casino] =====
+2026-11-26 20:57:08,627 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:57:08,628 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:14,103 [INFO] craftbet.conftest: ===== START test_more_menu_reveals_additional_sections =====
+2026-11-26 20:57:15,080 [INFO] craftbet.Header: Screenshot saved: 205714_more_menu_open.png
+2026-11-26 20:57:16,659 [INFO] craftbet.ContentPage: Screenshot saved: 205716_more_menu_section.png
+2026-11-26 20:57:16,936 [INFO] craftbet.BasePage: Screenshot saved: 205716_PASSED_test_more_menu_reveals_additional_sections.png
+2026-11-26 20:57:16,941 [INFO] craftbet.conftest: ===== END test_more_menu_reveals_additional_sections =====
+2026-11-26 20:57:20,674 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:57:20,674 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:25,163 [INFO] craftbet.conftest: ===== START test_info_pages_load[Terms] =====
+2026-11-26 20:57:25,164 [INFO] craftbet.ContentPage: Open https://craftbet.com/info/terms
+2026-11-26 20:57:26,795 [INFO] craftbet.ContentPage: Screenshot saved: 205726_info_Terms_and_conditions.png
+2026-11-26 20:57:26,969 [INFO] craftbet.BasePage: Screenshot saved: 205726_PASSED_test_info_pages_load_Terms_.png
+2026-11-26 20:57:26,998 [INFO] craftbet.conftest: ===== END test_info_pages_load[Terms] =====
+2026-11-26 20:57:30,657 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:57:30,658 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:34,986 [INFO] craftbet.conftest: ===== START test_info_pages_load[Privacy] =====
+2026-11-26 20:57:34,988 [INFO] craftbet.ContentPage: Open https://craftbet.com/info/privacy
+2026-11-26 20:57:36,115 [INFO] craftbet.ContentPage: Screenshot saved: 205735_info_Privacy_policy.png
+2026-11-26 20:57:36,337 [INFO] craftbet.BasePage: Screenshot saved: 205736_PASSED_test_info_pages_load_Privacy_.png
+2026-11-26 20:57:36,348 [INFO] craftbet.conftest: ===== END test_info_pages_load[Privacy] =====
+2026-11-26 20:57:39,969 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:57:39,969 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:41,744 [INFO] craftbet.conftest: ===== START test_info_pages_load[AML] =====
+2026-11-26 20:57:41,745 [INFO] craftbet.ContentPage: Open https://craftbet.com/info/aml
+2026-11-26 20:57:43,190 [INFO] craftbet.ContentPage: Screenshot saved: 205742_info_AML.png
+2026-11-26 20:57:43,447 [INFO] craftbet.BasePage: Screenshot saved: 205743_PASSED_test_info_pages_load_AML_.png
+2026-11-26 20:57:43,459 [INFO] craftbet.conftest: ===== END test_info_pages_load[AML] =====
+2026-11-26 20:57:47,027 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:57:47,027 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:57:50,412 [INFO] craftbet.conftest: ===== START test_info_pages_load[Promotions] =====
+2026-11-26 20:57:50,413 [INFO] craftbet.ContentPage: Open https://craftbet.com/promotions
+2026-11-26 20:58:21,669 [INFO] craftbet.BasePage: Screenshot saved: 205821_PASSED_test_info_pages_load_Promotions_.png
+2026-11-26 20:58:21,669 [INFO] craftbet.conftest: ===== END test_info_pages_load[Promotions] =====
+2026-11-26 20:58:25,584 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:58:25,585 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:58:29,341 [INFO] craftbet.conftest: ===== START test_back_forward_and_logo_navigation =====
+2026-11-26 20:58:29,342 [INFO] craftbet.Header: Click top menu item 'group/7'
+2026-11-26 20:58:31,242 [INFO] craftbet.Header: Click top menu item 'products/5'
+2026-11-26 20:58:32,943 [INFO] craftbet.BasePage: Screenshot saved: 205832_PASSED_test_back_forward_and_logo_navigation.png
+2026-11-26 20:58:32,967 [INFO] craftbet.conftest: ===== END test_back_forward_and_logo_navigation =====
+2026-11-26 20:58:36,779 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 20:58:36,779 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 20:58:40,865 [INFO] craftbet.conftest: ===== START test_open_several_demo_games =====
+2026-11-26 20:58:40,866 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7
+2026-11-26 20:58:42,762 [INFO] craftbet.CasinoPage: Found 29 cards: 23 with demo mode, 6 real-money only (skipped)
+2026-11-26 20:58:42,762 [INFO] craftbet.CasinoPage: Opening demo game 'Hot Slice' (Evoplay)
+2026-11-26 20:58:42,762 [INFO] craftbet.GamePage: Open https://craftbet.com/game/1235685/demo/2
+2026-11-26 20:58:52,238 [INFO] craftbet.GamePage: Screenshot saved: 205852_game_loaded_Hot_Slice.png
+2026-11-26 20:59:05,181 [INFO] craftbet.GamePage: Game interactions performed: ['click centre (focus game)', 'click Play/Continue zone', 'click Play/Continue zone (alt.)', 'press SPACE (spin with demo credits)', 'press SPACE (spin with demo credits)']
+2026-11-26 20:59:05,484 [INFO] craftbet.GamePage: Screenshot saved: 205905_game_after_interaction_Hot_Slice.png
+2026-11-26 20:59:05,484 [INFO] craftbet.CasinoPage: Opening demo game 'Hot Triple Sevens' (Evoplay)
+2026-11-26 20:59:05,484 [INFO] craftbet.GamePage: Open https://craftbet.com/game/96211/demo/2
+2026-11-26 20:59:15,007 [INFO] craftbet.GamePage: Screenshot saved: 205914_game_loaded_Hot_Triple_Sevens.png
+2026-11-26 20:59:28,111 [INFO] craftbet.GamePage: Game interactions performed: ['click centre (focus game)', 'click Play/Continue zone', 'click Play/Continue zone (alt.)', 'press SPACE (spin with demo credits)', 'press SPACE (spin with demo credits)']
+2026-11-26 20:59:28,767 [INFO] craftbet.GamePage: Screenshot saved: 205928_game_after_interaction_Hot_Triple_Sevens.png
+2026-11-26 20:59:28,769 [INFO] craftbet.CasinoPage: Opening demo game 'Gates Of Olympus' (PragmaticPlay)
+2026-11-26 20:59:28,769 [INFO] craftbet.GamePage: Open https://craftbet.com/game/54098/demo/2
+2026-11-26 20:59:38,411 [INFO] craftbet.GamePage: Screenshot saved: 205938_game_loaded_Gates_Of_Olympus.png
+2026-11-26 20:59:51,984 [INFO] craftbet.GamePage: Game interactions performed: ['click centre (focus game)', 'click Play/Continue zone', 'click Play/Continue zone (alt.)', 'press SPACE (spin with demo credits)', 'press SPACE (spin with demo credits)']
+2026-11-26 20:59:52,817 [INFO] craftbet.GamePage: Screenshot saved: 205952_game_after_interaction_Gates_Of_Olympus.png
+2026-11-26 20:59:52,818 [INFO] craftbet.CasinoPage: Demo games verified: [('Hot Slice', 'canvas', 5), ('Hot Triple Sevens', 'canvas', 5), ('Gates Of Olympus', 'canvas', 5)]
+2026-11-26 20:59:53,240 [INFO] craftbet.BasePage: Screenshot saved: 205952_PASSED_test_open_several_demo_games.png
+2026-11-26 20:59:53,356 [INFO] craftbet.conftest: ===== END test_open_several_demo_games =====
+2026-11-26 21:00:03,658 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:00:03,658 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:00:08,000 [INFO] craftbet.conftest: ===== START test_open_demo_game_from_lobby_by_click =====
+2026-11-26 21:00:08,003 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7
+2026-11-26 21:00:09,489 [INFO] craftbet.CasinoPage: Found 29 cards: 23 with demo mode, 6 real-money only (skipped)
+2026-11-26 21:00:10,729 [INFO] craftbet.GamePage: Screenshot saved: 210010_game_opened_by_click_Hot_Slice.png
+2026-11-26 21:00:11,970 [INFO] craftbet.BasePage: Screenshot saved: 210011_PASSED_test_open_demo_game_from_lobby_by_click.png
+2026-11-26 21:00:11,995 [INFO] craftbet.conftest: ===== END test_open_demo_game_from_lobby_by_click =====
+2026-11-26 21:00:15,736 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:00:15,736 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:00:19,267 [INFO] craftbet.conftest: ===== START test_language_switch =====
+2026-11-26 21:00:19,268 [INFO] craftbet.Header: Switch language to 'Русский'
+2026-11-26 21:00:22,556 [INFO] craftbet.Header: Screenshot saved: 210022_language_russian.png
+2026-11-26 21:00:22,556 [INFO] craftbet.Header: Switch language to 'English'
+2026-11-26 21:00:24,288 [INFO] craftbet.BasePage: Screenshot saved: 210023_PASSED_test_language_switch.png
+2026-11-26 21:00:24,304 [INFO] craftbet.conftest: ===== END test_language_switch =====
+2026-11-26 21:00:27,829 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:00:27,829 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:00:32,092 [INFO] craftbet.conftest: ===== START test_casino_category_tabs =====
+2026-11-26 21:00:32,093 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7
+2026-11-26 21:00:33,937 [INFO] craftbet.CasinoPage: Select casino category 'Slots'
+2026-11-26 21:00:35,965 [INFO] craftbet.CasinoPage: Screenshot saved: 210035_casino_category_Slots.png
+2026-11-26 21:00:36,112 [INFO] craftbet.CasinoPage: Select casino category 'Table Games'
+2026-11-26 21:00:37,621 [INFO] craftbet.CasinoPage: Screenshot saved: 210037_casino_category_Table_Games.png
+2026-11-26 21:00:37,742 [INFO] craftbet.CasinoPage: Select casino category 'Top'
+2026-11-26 21:00:39,130 [INFO] craftbet.CasinoPage: Screenshot saved: 210038_casino_category_Top.png
+2026-11-26 21:00:39,616 [INFO] craftbet.BasePage: Screenshot saved: 210039_PASSED_test_casino_category_tabs.png
+2026-11-26 21:00:39,631 [INFO] craftbet.conftest: ===== END test_casino_category_tabs =====
+2026-11-26 21:00:43,322 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:00:43,323 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:00:46,748 [INFO] craftbet.conftest: ===== START test_game_search[book] =====
+2026-11-26 21:00:46,748 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7
+2026-11-26 21:00:48,424 [INFO] craftbet.CasinoPage: Search game 'book'
+2026-11-26 21:00:50,040 [INFO] craftbet.CasinoPage: Screenshot saved: 210049_search_book.png
+2026-11-26 21:00:50,365 [INFO] craftbet.BasePage: Screenshot saved: 210050_PASSED_test_game_search_book_.png
+2026-11-26 21:00:50,373 [INFO] craftbet.conftest: ===== END test_game_search[book] =====
+2026-11-26 21:00:53,985 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:00:53,985 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:00:59,258 [INFO] craftbet.conftest: ===== START test_game_search[roulette] =====
+2026-11-26 21:00:59,262 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7
+2026-11-26 21:01:00,788 [INFO] craftbet.CasinoPage: Search game 'roulette'
+2026-11-26 21:01:02,492 [INFO] craftbet.CasinoPage: Screenshot saved: 210102_search_roulette.png
+2026-11-26 21:01:02,909 [INFO] craftbet.BasePage: Screenshot saved: 210102_PASSED_test_game_search_roulette_.png
+2026-11-26 21:01:02,921 [INFO] craftbet.conftest: ===== END test_game_search[roulette] =====
+2026-11-26 21:01:06,456 [INFO] craftbet.driver: Started chrome (headless=False)
+2026-11-26 21:01:06,456 [INFO] craftbet.BasePage: Open https://craftbet.com/home
+2026-11-26 21:01:11,438 [INFO] craftbet.conftest: ===== START test_scroll_lobby_loads_more_games =====
+2026-11-26 21:01:11,438 [INFO] craftbet.CasinoPage: Open https://craftbet.com/group/7/1
+2026-11-26 21:01:17,264 [INFO] craftbet.CasinoPage: Screenshot saved: 210116_lobby_scrolled.png
+2026-11-26 21:01:17,636 [INFO] craftbet.BasePage: Screenshot saved: 210117_PASSED_test_scroll_lobby_loads_more_games.png
+2026-11-26 21:01:17,653 [INFO] craftbet.conftest: ===== END test_scroll_lobby_loads_more_games =====
